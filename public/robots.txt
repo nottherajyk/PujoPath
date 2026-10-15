@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /wishlist
+
+Sitemap: https://pujapath.vercel.app/sitemap.xml

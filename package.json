@@ -1,0 +1,11 @@
+{
+  "name": "pujapath",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "PujaPath — Kolkata Durga Puja pandal guide and metro route planner (static site).",
+  "scripts": {
+    "build": "node build.mjs",
+    "start": "node build.mjs && npx --yes serve public -l 3000"
+  }
+}
