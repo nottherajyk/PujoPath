@@ -344,25 +344,24 @@ write('planner/index.html', layout({
     </div>
     <div class="two">
       <div class="field station-search-field">
-        <label for="p-start">Start from station</label>
+        <label for="p-start"><span data-start-label>Start from station or place</span></label>
         <div class="station-search-box">
-          <input class="input" id="p-start" type="search" placeholder="e.g. Shyambazar" autocomplete="off" list="station-datalist" value="Shyambazar" enterkeyhint="done" style="padding-left:38px">
+          <input class="input" id="p-start" type="search" placeholder="e.g. Shyambazar, Chinar Park, or any place" autocomplete="off" value="Shyambazar" enterkeyhint="done" style="padding-left:38px">
           ${icon('search', 'icon icon-l')}
           <div class="station-suggestions" data-start-suggestions hidden></div>
         </div>
+        <span class="muted" data-start-hint style="font-size:11.5px;margin-top:3px;display:block">Nearest metro station or area to begin hopping</span>
       </div>
       <div class="field station-search-field">
-        <label for="p-end">End at station <span class="muted" style="font-weight:400;font-size:12px">(Optional)</span></label>
+        <label for="p-end"><span data-end-label>End at station or place</span> <span class="muted" style="font-weight:400;font-size:12px">(Optional)</span></label>
         <div class="station-search-box">
-          <input class="input" id="p-end" type="search" placeholder="e.g. Kalighat, or leave empty" autocomplete="off" list="station-datalist" value="" enterkeyhint="done" style="padding-left:38px">
+          <input class="input" id="p-end" type="search" placeholder="e.g. Kalighat, City Centre 2, or leave empty" autocomplete="off" value="" enterkeyhint="done" style="padding-left:38px">
           ${icon('search', 'icon icon-l')}
           <div class="station-suggestions" data-end-suggestions hidden></div>
         </div>
+        <span class="muted" data-end-hint style="font-size:11.5px;margin-top:3px;display:block">Where you want to end your hopping</span>
       </div>
     </div>
-    <datalist id="station-datalist">
-      ${stationDatalist}
-    </datalist>
     <div data-opt="custom" hidden class="field"><label for="p-search">Choose pandals</label><input class="input" id="p-search" type="search" placeholder="Search to add pandals" autocomplete="off"><div class="picker-results" data-picker></div><p class="count-note" data-picked-note></p>
       <button type="button" class="btn btn-ghost btn-sm" data-use-checklist>${icon('checklist')} Use my checklist</button></div>
     <div class="two" data-opt-limit>
