@@ -329,26 +329,47 @@ write('index.html', layout({
     <div class="home-loader-bar"><div class="home-loader-fill"></div></div>
   </div>
 </div>
-<section class="hero">
-  <img class="hero-img" src="/assets/hero-night.webp" alt="Illuminated Durga Puja pandal at night with a golden idol and red banners, crowds filming" width="1672" height="941" fetchpriority="high">
-  <div class="wrap">
-    <div class="hero-content">
-      <button type="button" class="hero-guide-badge" data-open-guide aria-label="First time here? Take a quick app tour">
-        ${icon('guide')} First time here? Quick Guide <span>&rarr;</span>
-      </button>
-      <h1>Hop More. <em>Miss Less.</em></h1>
-      <p class="lead">Your pandal-hopping plan, sorted. Discover the must-sees, map your route, and fit more Pujo into every night.</p>
-      <form class="search" action="/pandals" method="get" role="search">
-        ${icon('search', 'icon icon-l')}
-        <label class="sr-only" for="hq">Search pandals, areas or metro stations</label>
-        <input id="hq" name="q" type="search" placeholder="Search pandals, areas, stations…" autocomplete="off" enterkeyhint="search">
-        <button type="submit" aria-label="Search">${icon('arrow')}</button>
-      </form>
-      <div class="quick">
-        <a href="/pandals">${icon('temple')}<b>Explore Pandals</b><span>${total} listed</span></a>
-        <a href="/planner">${icon('route')}<b>Plan Your Route</b><span>By zone or metro</span></a>
-        <a href="/metro">${icon('train')}<b>Metro Guide</b><span>Lines and stations</span></a>
-        <a href="/checklist">${icon('checklist')}<b>Create Checklist</b><span>Track your hops</span></a>
+<section class="hero hero-editorial">
+  <div class="hero-bg-wrap" aria-hidden="true">
+    <img class="hero-bg-img" src="/assets/hero-night.webp" alt="" width="1672" height="941" fetchpriority="high">
+    <div class="hero-overlay"></div>
+  </div>
+  <div class="wrap hero-wrap">
+    <div class="hero-body">
+      <!-- Sentence as Layout -->
+      <h1 class="hero-headline">
+        <span class="hero-line-start">Hop More.</span>
+        <span class="hero-strip" aria-hidden="true">
+          <img src="/assets/hero-night.webp" alt="Illuminated Durga Puja pandal and golden idol at night" width="600" height="130" fetchpriority="high">
+        </span>
+        <span class="hero-line-end">Miss Less.</span>
+      </h1>
+      
+      <!-- Statement Paragraph (capped at 54ch) -->
+      <p class="hero-statement">The cultural route planner for Kolkata’s ${total}+ Durga Puja pandals. Curated transit circuits, verified metro gates, and crowd peak times.</p>
+
+      <!-- Primary Action & Search Group -->
+      <div class="hero-interaction-group">
+        <a class="hero-prime-btn" href="/planner">${icon('route')} <span>Plan Your Route</span> <span class="hero-arr" aria-hidden="true">→</span></a>
+        <form class="hero-search-bar" action="/pandals" method="get" role="search">
+          ${icon('search', 'icon hero-search-ico')}
+          <label class="sr-only" for="hq">Search pandals, areas or metro stations</label>
+          <input id="hq" name="q" type="search" placeholder="Search pandals, areas, metro…" autocomplete="off" enterkeyhint="search">
+          <button type="submit" class="hero-search-btn" aria-label="Search">Search</button>
+        </form>
+      </div>
+
+      <!-- Editorial Links Row -->
+      <div class="hero-links-strip">
+        <a class="hero-link-item" href="/pandals">${icon('temple')} <span>${total} Pandals</span></a>
+        <span class="hero-sep" aria-hidden="true">/</span>
+        <a class="hero-link-item" href="/hopping">${icon('compass')} <span>5 Metro Zones</span></a>
+        <span class="hero-sep" aria-hidden="true">/</span>
+        <a class="hero-link-item" href="/metro">${icon('train')} <span>Metro Guide</span></a>
+        <span class="hero-sep" aria-hidden="true">/</span>
+        <a class="hero-link-item" href="/checklist">${icon('checklist')} <span>Checklist</span></a>
+        <span class="hero-sep" aria-hidden="true">/</span>
+        <button type="button" class="hero-link-item hero-link-btn" data-open-guide>${icon('guide')} <span>App Guide</span></button>
       </div>
     </div>
   </div>

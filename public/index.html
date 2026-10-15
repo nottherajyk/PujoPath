@@ -94,26 +94,47 @@
     <div class="home-loader-bar"><div class="home-loader-fill"></div></div>
   </div>
 </div>
-<section class="hero">
-  <img class="hero-img" src="/assets/hero-night.webp" alt="Illuminated Durga Puja pandal at night with a golden idol and red banners, crowds filming" width="1672" height="941" fetchpriority="high">
-  <div class="wrap">
-    <div class="hero-content">
-      <button type="button" class="hero-guide-badge" data-open-guide aria-label="First time here? Take a quick app tour">
-        <svg class="icon" aria-hidden="true"><use href="#i-guide"/></svg> First time here? Quick Guide <span>&rarr;</span>
-      </button>
-      <h1>Hop More. <em>Miss Less.</em></h1>
-      <p class="lead">Your pandal-hopping plan, sorted. Discover the must-sees, map your route, and fit more Pujo into every night.</p>
-      <form class="search" action="/pandals" method="get" role="search">
-        <svg class="icon icon-l" aria-hidden="true"><use href="#i-search"/></svg>
-        <label class="sr-only" for="hq">Search pandals, areas or metro stations</label>
-        <input id="hq" name="q" type="search" placeholder="Search pandals, areas, stations…" autocomplete="off" enterkeyhint="search">
-        <button type="submit" aria-label="Search"><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
-      </form>
-      <div class="quick">
-        <a href="/pandals"><svg class="icon" aria-hidden="true"><use href="#i-temple"/></svg><b>Explore Pandals</b><span>210 listed</span></a>
-        <a href="/planner"><svg class="icon" aria-hidden="true"><use href="#i-route"/></svg><b>Plan Your Route</b><span>By zone or metro</span></a>
-        <a href="/metro"><svg class="icon" aria-hidden="true"><use href="#i-train"/></svg><b>Metro Guide</b><span>Lines and stations</span></a>
-        <a href="/checklist"><svg class="icon" aria-hidden="true"><use href="#i-checklist"/></svg><b>Create Checklist</b><span>Track your hops</span></a>
+<section class="hero hero-editorial">
+  <div class="hero-bg-wrap" aria-hidden="true">
+    <img class="hero-bg-img" src="/assets/hero-night.webp" alt="" width="1672" height="941" fetchpriority="high">
+    <div class="hero-overlay"></div>
+  </div>
+  <div class="wrap hero-wrap">
+    <div class="hero-body">
+      <!-- Sentence as Layout -->
+      <h1 class="hero-headline">
+        <span class="hero-line-start">Hop More.</span>
+        <span class="hero-strip" aria-hidden="true">
+          <img src="/assets/hero-night.webp" alt="Illuminated Durga Puja pandal and golden idol at night" width="600" height="130" fetchpriority="high">
+        </span>
+        <span class="hero-line-end">Miss Less.</span>
+      </h1>
+      
+      <!-- Statement Paragraph (capped at 54ch) -->
+      <p class="hero-statement">The cultural route planner for Kolkata’s 210+ Durga Puja pandals. Curated transit circuits, verified metro gates, and crowd peak times.</p>
+
+      <!-- Primary Action & Search Group -->
+      <div class="hero-interaction-group">
+        <a class="hero-prime-btn" href="/planner"><svg class="icon" aria-hidden="true"><use href="#i-route"/></svg> <span>Plan Your Route</span> <span class="hero-arr" aria-hidden="true">→</span></a>
+        <form class="hero-search-bar" action="/pandals" method="get" role="search">
+          <svg class="icon hero-search-ico" aria-hidden="true"><use href="#i-search"/></svg>
+          <label class="sr-only" for="hq">Search pandals, areas or metro stations</label>
+          <input id="hq" name="q" type="search" placeholder="Search pandal, area, or metro station…" autocomplete="off" enterkeyhint="search">
+          <button type="submit" class="hero-search-btn" aria-label="Search">Search</button>
+        </form>
+      </div>
+
+      <!-- Editorial Links Row -->
+      <div class="hero-links-strip">
+        <a class="hero-link-item" href="/pandals"><svg class="icon" aria-hidden="true"><use href="#i-temple"/></svg> <span>210 Pandals</span></a>
+        <span class="hero-sep" aria-hidden="true">/</span>
+        <a class="hero-link-item" href="/hopping"><svg class="icon" aria-hidden="true"><use href="#i-compass"/></svg> <span>5 Metro Zones</span></a>
+        <span class="hero-sep" aria-hidden="true">/</span>
+        <a class="hero-link-item" href="/metro"><svg class="icon" aria-hidden="true"><use href="#i-train"/></svg> <span>Metro Guide</span></a>
+        <span class="hero-sep" aria-hidden="true">/</span>
+        <a class="hero-link-item" href="/checklist"><svg class="icon" aria-hidden="true"><use href="#i-checklist"/></svg> <span>Checklist</span></a>
+        <span class="hero-sep" aria-hidden="true">/</span>
+        <button type="button" class="hero-link-item hero-link-btn" data-open-guide><svg class="icon" aria-hidden="true"><use href="#i-guide"/></svg> <span>App Guide</span></button>
       </div>
     </div>
   </div>

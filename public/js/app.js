@@ -2006,16 +2006,16 @@ function initGuide() {
     }
   });
 
-  // Auto-launch for first-time visitors after smooth page load delay (500ms)
+  // Auto-launch for first-time visitors after smooth page load delay (unless dismissed or guide=0)
   try {
-    const isDismissed = store.get('pp_guide_dismissed', false);
+    const isDismissed = store.get('pp_guide_dismissed', false) || window.location.search.includes('guide=0');
     const forceGuide = window.location.search.includes('guide=1') || window.location.hash === '#guide';
     if (!isDismissed || forceGuide) {
       setTimeout(() => {
         if (!store.get('pp_guide_dismissed', false) || forceGuide) {
           openGuide();
         }
-      }, 500);
+      }, 2500);
     }
   } catch (e) {}
 }
