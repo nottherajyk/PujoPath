@@ -65,6 +65,7 @@ const sprite = `<svg xmlns="http://www.w3.org/2000/svg" style="display:none" ari
 <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/></symbol>
 <symbol id="i-car" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 3c-.1.2-.1.4-.1.6v4.5c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></symbol>
 <symbol id="i-parking" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" stroke-width="2"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-locate" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8" fill="none"/></symbol>
 <symbol id="i-lotus" viewBox="0 0 64 64"><path d="M32 8c5 8 6 16 0 27-6-11-5-19 0-27zM12 22c9 1 16 6 19 15-9 1-16-3-19-15zM52 22c-3 12-10 16-19 15 3-9 10-14 19-15zM6 38c10-2 18 1 24 8-10 4-19 1-24-8zM58 38c-5 9-14 12-24 8 6-7 14-10 24-8zM32 50c-8 0-15 3-20 8h40c-5-5-12-8-20-8z"/></symbol>
 </svg>`;
 
@@ -346,8 +347,9 @@ write('planner/index.html', layout({
       <div class="field station-search-field">
         <label for="p-start"><span data-start-label>Start from station or place</span></label>
         <div class="station-search-box">
-          <input class="input" id="p-start" type="search" placeholder="e.g. Shyambazar, Chinar Park, or any place" autocomplete="off" value="Shyambazar" enterkeyhint="done" style="padding-left:38px">
+          <input class="input" id="p-start" type="search" placeholder="e.g. Shyambazar, Chinar Park, or any place" autocomplete="off" value="Shyambazar" enterkeyhint="done" style="padding-left:38px;padding-right:38px">
           ${icon('search', 'icon icon-l')}
+          <button type="button" class="station-locate-btn" data-start-locate title="Use my current GPS location" aria-label="Use my current GPS location">${icon('locate')}</button>
           <div class="station-suggestions" data-start-suggestions hidden></div>
         </div>
         <span class="muted" data-start-hint style="font-size:11.5px;margin-top:3px;display:block">Nearest metro station or area to begin hopping</span>
@@ -361,6 +363,21 @@ write('planner/index.html', layout({
         </div>
         <span class="muted" data-end-hint style="font-size:11.5px;margin-top:3px;display:block">Where you want to end your hopping</span>
       </div>
+    </div>
+    <div class="route-quick-chips">
+      <button type="button" class="chip-action-btn" data-near-me>${icon('locate')} <span>Find pandals near my location</span></button>
+      <button type="button" class="chip-action-btn" data-swap-endpoints title="Swap start and finish places">${icon('route')} <span>Swap Start & End</span></button>
+    </div>
+    <div class="enroute-box" data-enroute-box hidden>
+      <div class="enroute-header">
+        <span class="enroute-icon">✨</span>
+        <div class="enroute-info">
+          <b data-enroute-title>Pandals on your way</b>
+          <span class="muted" data-enroute-subtitle>Directly between start and end</span>
+        </div>
+        <button type="button" class="btn btn-sm btn-ghost" data-enroute-toggle-all>Select all</button>
+      </div>
+      <div class="enroute-chips" data-enroute-chips></div>
     </div>
     <div data-opt="custom" hidden class="field"><label for="p-search">Choose pandals</label><input class="input" id="p-search" type="search" placeholder="Search to add pandals" autocomplete="off"><div class="picker-results" data-picker></div><p class="count-note" data-picked-note></p>
       <button type="button" class="btn btn-ghost btn-sm" data-use-checklist>${icon('checklist')} Use my checklist</button></div>
@@ -813,7 +830,7 @@ fs.writeFileSync(path.join(ROOT, 'vercel.json'), JSON.stringify({
         { key: 'X-Frame-Options', value: 'DENY' },
         { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
         { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains; preload' },
-        { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+        { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(self)' },
         { key: 'Content-Security-Policy', value: "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; frame-ancestors 'none'; form-action 'self';" }
       ]
     }

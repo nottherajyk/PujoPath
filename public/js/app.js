@@ -1,4 +1,5 @@
 import { makeCtx, cardHTML, esc, icon, routeLinks, stationToPandalLink, placeLink } from '/js/shared.js';
+import { STATION_COORDS, KOLKATA_PLACES, haversine, getPandalCoords, resolvePlaceCoords, findNearbyPandals, findPandalsOnRoute, getCurrentLocation, setUserGps, getUserGps } from '/js/geo.js';
 
 const PAGE = 10;
 const $ = (s, r = document) => r.querySelector(s);
@@ -362,44 +363,20 @@ function init() {
       const stMatch = getStationMatch(clean);
       if (stMatch) return stMatch;
 
-      const lower = clean.toLowerCase();
-      for (const p of data.pandals) {
-        if (p.name.toLowerCase().includes(lower) || lower.includes(p.name.toLowerCase()) ||
-            p.area.toLowerCase().includes(lower) || lower.includes(p.area.toLowerCase())) {
-          return p.station;
+      const placeRes = resolvePlaceCoords(clean);
+      if (placeRes && placeRes.station) return placeRes.station;
+
+      if (placeRes && placeRes.coords) {
+        let nearest = 'Shyambazar';
+        let minDist = Infinity;
+        for (const [st, c] of Object.entries(STATION_COORDS)) {
+          const d = haversine(placeRes.coords[0], placeRes.coords[1], c[0], c[1]);
+          if (d < minDist) {
+            minDist = d;
+            nearest = st;
+          }
         }
-      }
-
-      const areaToStation = [
-        [['chinar park', 'rajarhat', 'gopalpur', 'bablatala', 'tegharia', 'kaikhali', 'salua', 'dashadrone', 'arjunpur', 'atghara', 'reckjoani', 'airport', 'cc2', 'city centre 2'], 'Jai Hind (Airport)'],
-        [['lake town', 'sree bhumi', 'sreebhumi', 'bangur', 'dum dum park', 'patipukur', 'dakshindari', 'belgachia', 'tala'], 'Belgachia'],
-        [['shyambazar', 'hatibagan', 'bagbazar', 'fariapukur', 'ultadanga', 'telengabagan', 'shobhabazar', 'sovabazar', 'kumartuli', 'ahiritola'], 'Shyambazar'],
-        [['girish park', 'chaltabagan', 'simla', 'jorasanko', 'beadon'], 'Girish Park'],
-        [['college square', 'college street', 'bowbazar', 'central', 'chandni', 'janbazar'], 'Central'],
-        [['sealdah', 'lebutala', 'muchipara'], 'Sealdah'],
-        [['mg road', 'burrabazar', 'barabazar', 'howrah'], 'Mahatma Gandhi Road'],
-        [['esplanade', 'dharmatala', 'maidan', 'park street', 'victoria'], 'Park Street'],
-        [['rabindra sadan', 'exide', 'bhowanipore', 'maddox square', 'netaji bhavan'], 'Netaji Bhavan'],
-        [['kalighat', 'rashbehari', 'deshapriya', 'tridhara', 'ballygunge', 'hindustan park', 'gariahat', 'singhi park', 'ekdalia', 'suruchi', 'new alipore', 'chetla', 'badamtala', '66 pally'], 'Kalighat'],
-        [['rabindra sarobar', 'southern avenue', 'lake', 'dhakuria', 'jodhpur park', 'selimpur', 'babubagan', 'mudiali', 'shib mandir'], 'Rabindra Sarobar'],
-        [['tollygunge', 'ranikuthi', 'haridevpur', '41 pally', 'ajeya sangha'], 'Mahanayak Uttam Kumar'],
-        [['behala', 'chowrasta', 'taratala', 'barisha', 'sakherbazar', 'thakurpukur', 'joka'], 'Behala Chowrasta'],
-        [['kasba', 'bosepukur', 'rajdanga', 'ruby', 'em bypass'], 'Hemanta Mukhopadhyay'],
-        [['garia', 'kanungo park', 'kudghat', 'naktala', 'baghajatin'], 'Kavi Nazrul'],
-        [['salt lake', 'bidhannagar', 'city centre 1', 'central park', 'karunamoyee', 'fd block', 'bj block', 'aj block', 'ak block', 'labony'], 'Central Park'],
-        [['sector 5', 'sector v', 'new town', 'action area', 'uniworld', 'ecospace'], 'Salt Lake Sector V'],
-        [['phoolbagan', 'kankurgachi', 'kakurgachi', 'beleghata'], 'Phoolbagan']
-      ];
-
-      for (const [terms, station] of areaToStation) {
-        if (terms.some((t) => lower.includes(t) || t.includes(lower))) {
-          return station;
-        }
-      }
-
-      if (picked.size > 0) {
-        const firstPicked = byId.get([...picked][0]);
-        if (firstPicked) return firstPicked.station;
+        return nearest;
       }
       return 'Shyambazar';
     }
@@ -422,21 +399,6 @@ function init() {
       });
     });
 
-    const POPULAR_PLACES = [
-      { name: 'Chinar Park', desc: 'Rajarhat Main Road · Hub', badge: 'Place' },
-      { name: 'City Centre 2', desc: 'Action Area IID · Mall & Parking', badge: 'Place' },
-      { name: 'Rajarhat Chowmatha', desc: 'Rajarhat Main Rd · Hub', badge: 'Place' },
-      { name: 'New Town City Square', desc: 'Action Area 1 · New Town', badge: 'Place' },
-      { name: 'Lake Town Clock Tower', desc: 'VIP Road · Hub', badge: 'Place' },
-      { name: 'Gariahat Crossing', desc: 'Ballygunge · South Hub', badge: 'Place' },
-      { name: 'Park Street', desc: 'Park St / Camac St · Central', badge: 'Place' },
-      { name: 'Howrah Railway Station', desc: 'Grand Station Terminal', badge: 'Place' },
-      { name: 'Sealdah Railway Station', desc: 'Central Transit Terminal', badge: 'Place' },
-      { name: 'Kolkata Airport (CCU)', desc: 'Terminal 2 · VIP Road', badge: 'Place' },
-      { name: 'Salt Lake City Centre 1', desc: 'Sector 1 · Salt Lake Hub', badge: 'Place' },
-      { name: 'Eco Park Gate 1', desc: 'Major Arterial Rd · New Town', badge: 'Place' }
-    ];
-
     function setupStationAutocomplete(inputEl, suggEl, isEnd = false) {
       if (!inputEl || !suggEl) return;
       function render(q = '') {
@@ -453,32 +415,40 @@ function init() {
             });
           }
 
+          // 1. Metro stations
           stationList.filter((s) => s.name.toLowerCase().includes(term) || s.line.toLowerCase().includes(term))
             .slice(0, 6)
             .forEach((s) => results.push({ name: s.name, desc: `${s.line} Line Metro`, badge: 'Metro' }));
 
-          POPULAR_PLACES.filter((p) => p.name.toLowerCase().includes(term) || p.desc.toLowerCase().includes(term))
-            .slice(0, 4)
-            .forEach((p) => results.push(p));
+          // 2. Comprehensive Kolkata Places (200+ locations)
+          const seenNames = new Set(results.map((r) => r.name.toLowerCase()));
+          KOLKATA_PLACES.filter((p) => {
+            const n = p.name.toLowerCase();
+            return (n.includes(term) || p.desc.toLowerCase().includes(term) || p.terms.some((t) => t.includes(term))) && !seenNames.has(n);
+          }).slice(0, 8).forEach((p) => {
+            seenNames.add(p.name.toLowerCase());
+            results.push({ name: p.name, desc: p.desc, badge: p.badge || 'Place' });
+          });
 
-          const seenAreas = new Set();
+          // 3. Pandal Areas
           for (const p of data.pandals) {
-            if (p.area.toLowerCase().includes(term) && !seenAreas.has(p.area)) {
-              seenAreas.add(p.area);
-              if (results.length < 12) {
+            const a = p.area.toLowerCase();
+            if (a.includes(term) && !seenNames.has(a)) {
+              seenNames.add(a);
+              if (results.length < 14) {
                 results.push({ name: p.area, desc: `Near ${p.station} Metro`, badge: 'Area' });
               }
             }
           }
         } else {
           if (isCustom) {
-            POPULAR_PLACES.slice(0, 4).forEach((p) => results.push(p));
+            KOLKATA_PLACES.slice(0, 6).forEach((p) => results.push({ name: p.name, desc: p.desc, badge: p.badge || 'Place' }));
           }
           stationList.slice(0, 8).forEach((s) => results.push({ name: s.name, desc: `${s.line} Line Metro`, badge: 'Metro' }));
         }
 
         if (!results.length) {
-          suggEl.innerHTML = '<div style="padding:10px 12px;font-size:13px;color:var(--muted)">Type any place, address or station name</div>';
+          suggEl.innerHTML = '<div style="padding:10px 12px;font-size:13px;color:var(--muted)">Type any place, landmark or station in Kolkata</div>';
         } else {
           suggEl.innerHTML = results.map((r) => `
             <button type="button" class="station-sugg-btn" data-place-pick="${esc(r.name)}">
@@ -491,19 +461,21 @@ function init() {
       }
 
       inputEl.addEventListener('focus', () => render(inputEl.value));
-      inputEl.addEventListener('input', () => { render(inputEl.value); saveDraft(); });
+      inputEl.addEventListener('input', () => { render(inputEl.value); saveDraft(); updateEnroutePreview(); });
       inputEl.addEventListener('change', () => {
         if (mode !== 'custom' && inputEl.value.trim()) {
           const match = getStationMatch(inputEl.value);
           if (match) inputEl.value = match;
         }
         saveDraft();
+        updateEnroutePreview();
       });
       inputEl.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
           e.preventDefault();
           suggEl.hidden = true;
           saveDraft();
+          updateEnroutePreview();
           inputEl.blur();
         } else if (e.key === 'Escape') {
           suggEl.hidden = true;
@@ -515,6 +487,7 @@ function init() {
         inputEl.value = btn.dataset.placePick;
         suggEl.hidden = true;
         saveDraft();
+        updateEnroutePreview();
       });
     }
 
@@ -527,6 +500,156 @@ function init() {
         if (startSugg) startSugg.hidden = true;
         if (endSugg) endSugg.hidden = true;
       }
+    });
+
+    // Geolocation and en-route preview handlers
+    const locateBtn = $('[data-start-locate]');
+    locateBtn?.addEventListener('click', async (e) => {
+      e.preventDefault();
+      locateBtn.classList.add('loading');
+      try {
+        const loc = await getCurrentLocation();
+        el.start.value = loc.label;
+        toast(`📍 Location detected: ${loc.label}`);
+        saveDraft();
+        updateEnroutePreview();
+      } catch (err) {
+        toast(err.message || 'Could not get location');
+      } finally {
+        locateBtn.classList.remove('loading');
+      }
+    });
+
+    const nearMeBtn = $('[data-near-me]');
+    nearMeBtn?.addEventListener('click', async (e) => {
+      e.preventDefault();
+      nearMeBtn.disabled = true;
+      const origHtml = nearMeBtn.innerHTML;
+      nearMeBtn.innerHTML = `${icon('locate')} <span>Detecting GPS...</span>`;
+      try {
+        const loc = await getCurrentLocation();
+        setMode('custom');
+        el.start.value = loc.label;
+        if (el.end) el.end.value = '';
+        const limit = Number(el.max?.value || 8);
+        const nearest = findNearbyPandals(loc.coords, data.pandals, 4.5, limit);
+        picked.clear();
+        nearest.forEach((n) => picked.add(n.pandal.id));
+        saveDraft();
+        drawPicker();
+        updateEnroutePreview();
+        build();
+        toast(`Found ${nearest.length} pandals near your location!`);
+      } catch (err) {
+        toast(err.message || 'Could not get location');
+      } finally {
+        nearMeBtn.disabled = false;
+        nearMeBtn.innerHTML = origHtml;
+      }
+    });
+
+    const swapBtn = $('[data-swap-endpoints]');
+    swapBtn?.addEventListener('click', () => {
+      const temp = el.start.value;
+      el.start.value = el.end ? el.end.value : '';
+      if (el.end) el.end.value = temp;
+      saveDraft();
+      updateEnroutePreview();
+      toast('Swapped start and finish places');
+    });
+
+    function updateEnroutePreview() {
+      const enrouteBox = $('[data-enroute-box]');
+      if (!enrouteBox) return;
+      const startVal = el.start.value.trim();
+      const endVal = el.end ? el.end.value.trim() : '';
+
+      if (!startVal) {
+        enrouteBox.hidden = true;
+        return;
+      }
+
+      const startRes = resolvePlaceCoords(startVal);
+      const endRes = endVal ? resolvePlaceCoords(endVal) : null;
+      if (!startRes) {
+        enrouteBox.hidden = true;
+        return;
+      }
+
+      const limit = Number(el.max?.value || 10);
+      const onRoute = findPandalsOnRoute(startRes.coords, endRes ? endRes.coords : null, data.pandals, limit);
+
+      if (!onRoute.length) {
+        enrouteBox.hidden = true;
+        return;
+      }
+
+      const titleEl = $('[data-enroute-title]');
+      const subEl = $('[data-enroute-subtitle]');
+      const chipsEl = $('[data-enroute-chips]');
+      const toggleAllBtn = $('[data-enroute-toggle-all]');
+
+      if (endRes) {
+        if (titleEl) titleEl.textContent = `${onRoute.length} pandals on your way from ${startRes.name} to ${endRes.name}`;
+        if (subEl) subEl.textContent = `Tap any pandal to toggle, or click "Build my route" below`;
+      } else {
+        if (titleEl) titleEl.textContent = `${onRoute.length} pandals near ${startRes.name}`;
+        if (subEl) subEl.textContent = `Closest pandals near your starting place`;
+      }
+
+      const allPicked = onRoute.length > 0 && onRoute.every((p) => picked.has(p.id));
+      if (toggleAllBtn) {
+        toggleAllBtn.textContent = allPicked ? 'Deselect all' : 'Select all';
+      }
+
+      if (chipsEl) {
+        chipsEl.innerHTML = onRoute.map((p) => {
+          const isSelected = picked.has(p.id);
+          const pCoords = getPandalCoords(p);
+          const dist = haversine(startRes.coords[0], startRes.coords[1], pCoords[0], pCoords[1]);
+          const distStr = dist < 1 ? `${Math.round(dist * 1000)}m` : `${dist.toFixed(1)}km`;
+          return `<button type="button" class="enroute-chip" aria-pressed="${isSelected}" data-enroute-pick="${p.id}" title="${esc(p.name)} (${esc(p.area)})">
+            <span>${isSelected ? '✓' : '+'} <b>${esc(p.name)}</b></span>
+            <span class="chip-dist">${distStr}</span>
+          </button>`;
+        }).join('');
+      }
+
+      enrouteBox.hidden = false;
+    }
+
+    const enrouteChips = $('[data-enroute-chips]');
+    enrouteChips?.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-enroute-pick]');
+      if (!btn) return;
+      const id = btn.dataset.enroutePick;
+      if (picked.has(id)) picked.delete(id);
+      else picked.add(id);
+      saveDraft();
+      drawPicker();
+      updateEnroutePreview();
+    });
+
+    const enrouteToggleAllBtn = $('[data-enroute-toggle-all]');
+    enrouteToggleAllBtn?.addEventListener('click', () => {
+      const startVal = el.start.value.trim();
+      const endVal = el.end ? el.end.value.trim() : '';
+      const startRes = resolvePlaceCoords(startVal);
+      const endRes = endVal ? resolvePlaceCoords(endVal) : null;
+      if (!startRes) return;
+      const limit = Number(el.max?.value || 10);
+      const onRoute = findPandalsOnRoute(startRes.coords, endRes ? endRes.coords : null, data.pandals, limit);
+      const allPicked = onRoute.length > 0 && onRoute.every((p) => picked.has(p.id));
+      if (allPicked) {
+        onRoute.forEach((p) => picked.delete(p.id));
+        toast('Removed en-route pandals from selection');
+      } else {
+        onRoute.forEach((p) => picked.add(p.id));
+        toast(`Added ${onRoute.length} en-route pandals to your plan`);
+      }
+      saveDraft();
+      drawPicker();
+      updateEnroutePreview();
     });
 
     // deep links
@@ -548,14 +671,13 @@ function init() {
       });
     }
     for (const f of [el.date, el.start, el.end, el.zone, el.line, el.max, el.must].filter(Boolean)) {
-      f.addEventListener('change', saveDraft);
+      f.addEventListener('change', () => { saveDraft(); updateEnroutePreview(); });
     }
 
     function setMode(m) {
       mode = m;
       modeBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.mode === m)));
       $$('[data-opt]').forEach((o) => (o.hidden = o.dataset.opt !== m));
-      $('[data-opt-limit]').hidden = m === 'custom';
 
       const startLabel = $('[data-start-label]');
       const endLabel = $('[data-end-label]');
@@ -564,11 +686,11 @@ function init() {
 
       if (m === 'custom') {
         if (startLabel) startLabel.textContent = 'Start from place / station';
-        el.start.placeholder = 'e.g. Chinar Park, Rajarhat, or any place';
+        el.start.placeholder = 'e.g. Chinar Park, Rajarhat, or any place in Kolkata';
         if (endLabel) endLabel.textContent = 'End at place / station';
-        if (el.end) el.end.placeholder = 'e.g. City Centre 2, Home, or any place (Optional)';
-        if (startHint) startHint.textContent = 'Choose whatever starting place you want — not restricted to metro stations';
-        if (endHint) endHint.textContent = 'Where you want to end your hopping and head home';
+        if (el.end) el.end.placeholder = 'e.g. City Centre 2, Home, or any place in Kolkata';
+        if (startHint) startHint.textContent = 'Choose any start place in Kolkata or use current GPS location';
+        if (endHint) endHint.textContent = 'Where you want to end your hopping — pandals on the way are found automatically';
       } else if (m === 'line') {
         if (startLabel) startLabel.textContent = 'Start station on this line';
         el.start.placeholder = 'e.g. Shyambazar';
@@ -586,7 +708,10 @@ function init() {
       }
 
       saveDraft();
-      if (m === 'custom') drawPicker();
+      if (m === 'custom') {
+        drawPicker();
+        updateEnroutePreview();
+      }
     }
     modeBtns.forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode)));
 
@@ -602,6 +727,7 @@ function init() {
       picked.has(b.dataset.pick) ? picked.delete(b.dataset.pick) : picked.add(b.dataset.pick);
       saveDraft();
       drawPicker();
+      updateEnroutePreview();
     });
     el.search.addEventListener('input', drawPicker);
     const useChecklistBtn = $('[data-use-checklist]') || $('[data-use-wish]');
@@ -609,6 +735,7 @@ function init() {
       check.items().forEach((id) => picked.add(id));
       saveDraft();
       drawPicker();
+      updateEnroutePreview();
       toast(`${check.items().length} checklist pandals added`);
     });
 
@@ -633,9 +760,26 @@ function init() {
       const hEnd = endStation ? hopsFrom(endStation) : null;
 
       let pool;
-      if (mode === 'zone') pool = data.pandals.filter((p) => (el.zone.value === 'bonedi' ? p.bonedi : p.zone === el.zone.value));
-      else if (mode === 'line') { const st = new Set(lineOf(el.line.value).stations); pool = data.pandals.filter((p) => st.has(p.station)); }
-      else pool = [...picked].map((id) => byId.get(id)).filter(Boolean);
+      if (mode === 'zone') {
+        pool = data.pandals.filter((p) => (el.zone.value === 'bonedi' ? p.bonedi : p.zone === el.zone.value));
+      } else if (mode === 'line') {
+        const st = new Set(lineOf(el.line.value).stations);
+        pool = data.pandals.filter((p) => st.has(p.station));
+      } else {
+        // Custom Mode
+        if (picked.size > 0) {
+          pool = [...picked].map((id) => byId.get(id)).filter(Boolean);
+        } else {
+          // Automatic discovery of pandals on the way between Start and End places!
+          const startRes = resolvePlaceCoords(startVal);
+          const endRes = endVal ? resolvePlaceCoords(endVal) : null;
+          const limit = Number(el.max?.value || 8);
+          pool = findPandalsOnRoute(startRes?.coords, endRes?.coords, data.pandals, limit);
+          pool.forEach((p) => picked.add(p.id));
+          drawPicker();
+          updateEnroutePreview();
+        }
+      }
 
       if (mode !== 'custom') {
         const mf = el.must.value === '1';
@@ -648,35 +792,47 @@ function init() {
         }
       }
 
-      if (endStation) {
-        // Greedy sequence from startStation towards endStation
-        let curr = startStation;
+      if (endStation || endVal) {
+        // Sequence stops greedily from startStation/startCoords towards endStation/endCoords
+        const startRes = resolvePlaceCoords(startVal);
+        let currCoords = startRes ? startRes.coords : [22.6033, 88.3703];
+        let currStation = startStation;
         const remaining = [...pool];
         const ordered = [];
         while (remaining.length) {
           remaining.sort((a, b) => {
-            const costA = (hop(curr, a.station) ?? 10) + 0.35 * (hEnd.get(a.station) ?? 10);
-            const costB = (hop(curr, b.station) ?? 10) + 0.35 * (hEnd.get(b.station) ?? 10);
-            return costA - costB || (a.must ? -1 : 1);
+            const cA = getPandalCoords(a);
+            const cB = getPandalCoords(b);
+            const distA = haversine(currCoords[0], currCoords[1], cA[0], cA[1]);
+            const distB = haversine(currCoords[0], currCoords[1], cB[0], cB[1]);
+            const metroCostA = (hop(currStation, a.station) ?? 10) + 0.35 * (hEnd ? (hEnd.get(a.station) ?? 10) : 0);
+            const metroCostB = (hop(currStation, b.station) ?? 10) + 0.35 * (hEnd ? (hEnd.get(b.station) ?? 10) : 0);
+            return (distA - distB) * 0.7 + (metroCostA - metroCostB) * 0.3 || (a.must ? -1 : 1);
           });
           const next = remaining.shift();
           ordered.push(next);
-          curr = next.station;
+          currCoords = getPandalCoords(next);
+          currStation = next.station;
         }
         route = ordered;
       } else {
-        let curr = startStation;
+        const startRes = resolvePlaceCoords(startVal);
+        let currCoords = startRes ? startRes.coords : [22.6033, 88.3703];
+        let currStation = startStation;
         const remaining = [...pool];
         const ordered = [];
         while (remaining.length) {
           remaining.sort((a, b) => {
-            const costA = hop(curr, a.station) ?? 10;
-            const costB = hop(curr, b.station) ?? 10;
-            return costA - costB || ord(a) - ord(b);
+            const cA = getPandalCoords(a);
+            const cB = getPandalCoords(b);
+            const distA = haversine(currCoords[0], currCoords[1], cA[0], cA[1]);
+            const distB = haversine(currCoords[0], currCoords[1], cB[0], cB[1]);
+            return distA - distB || (hop(currStation, a.station) ?? 10) - (hop(currStation, b.station) ?? 10) || ord(a) - ord(b);
           });
           const next = remaining.shift();
           ordered.push(next);
-          curr = next.station;
+          currCoords = getPandalCoords(next);
+          currStation = next.station;
         }
         route = ordered;
       }
@@ -690,7 +846,7 @@ function init() {
 
     function draw(focusFrom) {
       if (!route.length) {
-        itin.innerHTML = '<li class="empty">No pandals to route yet. Pick a zone, line or some pandals.</li>'; summary.innerHTML = ''; cta.classList.remove('show'); more.hidden = true; return;
+        itin.innerHTML = '<li class="empty">No pandals found on this route yet. Try another starting area or pick pandals.</li>'; summary.innerHTML = ''; cta.classList.remove('show'); more.hidden = true; return;
       }
       const startVal = el.start.value.trim() || 'Shyambazar';
       const endVal = el.end ? el.end.value.trim() : '';
@@ -717,11 +873,22 @@ function init() {
       const startSubtitle = isStartStation ? 'Metro start point · Begin your pujo route' : 'Starting place · Begin your hopping route';
       const startCard = `<li class="stop-terminal start"><div class="terminal-card"><span class="terminal-badge start">${startBadge}</span><div class="terminal-info"><b>${startTitle}</b><span class="muted">${startSubtitle}</span></div></div></li>`;
 
-      const stopCards = route.slice(0, shown).map((p) => {
-        const line = ctx.lineByStation.get(p.station); const n = hStart.get(p.station);
+      const startRes = resolvePlaceCoords(startVal);
+      const startCoords = startRes ? startRes.coords : [22.6033, 88.3703];
+
+      const stopCards = route.slice(0, shown).map((p, i) => {
+        const line = ctx.lineByStation.get(p.station);
+        const n = hStart.get(p.station);
+
+        const prevCoords = i === 0 ? startCoords : getPandalCoords(route[i - 1]);
+        const curCoords = getPandalCoords(p);
+        const legDist = haversine(prevCoords[0], prevCoords[1], curCoords[0], curCoords[1]);
+        const legDistStr = legDist < 1 ? `${Math.round(legDist * 1000)}m` : `${legDist.toFixed(1)}km`;
+        const legWalkMin = Math.max(3, Math.round(legDist * 12));
+
         return `<li class="stop"><div class="stop-card">
           <h3><a href="/pandal/${p.id}">${esc(p.name)}</a></h3>
-          <p class="muted" style="font-size:13px">${esc(p.area)}</p>
+          <p class="muted" style="font-size:13px">${esc(p.area)} · <span class="leg-dist-badge">${icon('walk')} ~${legDistStr} (${legWalkMin} min)</span></p>
           <span class="station"><span class="dot" style="background:${line.color}"></span>${esc(p.station)} Metro${n != null ? ` · ${n === 0 ? 'near start' : n + ' stop' + (n > 1 ? 's' : '') + ' from start'}` : ''}</span>
           <div class="actions"><a class="btn btn-ghost btn-sm" href="${stationToPandalLink(p)}" target="_blank" rel="noopener">${icon('walk')} Walk from station</a>${p.must ? '<span class="tag gold" style="align-self:center">Must visit</span>' : ''}</div>
           <button class="card-check-toggle" type="button" aria-pressed="false" aria-label="Add ${esc(p.name)} to checklist" title="Add to checklist" data-checklist-toggle="${p.id}">${icon('checklist')}</button>
@@ -746,6 +913,10 @@ function init() {
       function formatLabelForMaps(val, isStation) {
         if (!val) return null;
         const clean = val.trim();
+        const userGps = getUserGps();
+        if (userGps && (clean.toLowerCase().includes('my location') || clean.toLowerCase().includes('current location'))) {
+          return `${userGps.coords[0]},${userGps.coords[1]}`;
+        }
         if (isStation) return `${clean} Metro Station, Kolkata`;
         if (clean.toLowerCase().includes('kolkata')) return clean;
         return `${clean}, Kolkata`;
@@ -764,6 +935,7 @@ function init() {
     form.addEventListener('submit', (e) => { e.preventDefault(); build(); });
     $('[data-build]').addEventListener('click', (e) => { e.preventDefault(); build(); });
     setMode(mode);
+    updateEnroutePreview();
     if (params.get('zone') || params.get('wish') || params.get('add') || params.get('checklist')) { if (mode !== 'custom' || picked.size) build(); }
   }
 

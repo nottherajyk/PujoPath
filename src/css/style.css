@@ -1901,6 +1901,144 @@ main { min-height: 60vh; }
   background: rgba(22, 163, 74, 0.14);
   color: #15803d;
 }
+.station-locate-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color .15s, background .15s, transform .15s var(--spring);
+}
+.station-locate-btn:hover {
+  color: var(--sindoor);
+  background: rgba(184, 51, 42, 0.08);
+  transform: translateY(-50%) scale(1.08);
+}
+.station-locate-btn.loading {
+  animation: spinLocate 1s linear infinite;
+  color: var(--sindoor);
+}
+@keyframes spinLocate { 100% { transform: translateY(-50%) rotate(360deg); } }
+.route-quick-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 6px 0 14px;
+}
+.chip-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 13px;
+  font-size: 12.5px;
+  font-weight: 500;
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.75);
+  color: var(--navy);
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s, transform .15s var(--spring);
+}
+.chip-action-btn:hover {
+  background: var(--lotus);
+  border-color: var(--sindoor);
+  color: var(--sindoor);
+  transform: translateY(-1px);
+}
+.chip-action-btn .icon {
+  width: 14px;
+  height: 14px;
+  color: var(--sindoor);
+}
+.enroute-box {
+  margin: 10px 0 16px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, rgba(234, 220, 200, 0.35) 0%, rgba(255, 255, 255, 0.85) 100%);
+  border: 1px solid rgba(212, 160, 23, 0.28);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+.enroute-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.enroute-header .enroute-icon {
+  font-size: 18px;
+}
+.enroute-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.enroute-info b {
+  color: var(--navy);
+  font-size: 13.5px;
+}
+.enroute-info .muted {
+  font-size: 11.5px;
+}
+.enroute-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 150px;
+  overflow-y: auto;
+  padding-top: 4px;
+}
+.enroute-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid var(--glass-border);
+  background: #fff;
+  color: var(--navy);
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.enroute-chip:hover {
+  border-color: var(--sindoor);
+  transform: translateY(-1px);
+}
+.enroute-chip[aria-pressed="true"] {
+  background: var(--lotus);
+  border-color: var(--sindoor);
+  color: var(--sindoor);
+  font-weight: 600;
+}
+.enroute-chip .chip-dist {
+  font-size: 10.5px;
+  color: var(--muted);
+  margin-left: 2px;
+}
+.leg-dist-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--muted);
+  background: rgba(15, 23, 42, 0.05);
+  padding: 2px 7px;
+  border-radius: 5px;
+  margin-left: 6px;
+  font-weight: 500;
+}
 .picker-results { display: grid; gap: 6px; max-height: 260px; overflow: auto; }
 .pick {
   display: flex;
