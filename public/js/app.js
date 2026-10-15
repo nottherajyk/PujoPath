@@ -607,7 +607,7 @@ function init() {
           const isSelected = picked.has(p.id);
           const pCoords = getPandalCoords(p);
           const dist = haversine(startRes.coords[0], startRes.coords[1], pCoords[0], pCoords[1]);
-          const distStr = dist < 1 ? `${Math.round(dist * 1000)}m` : `${dist.toFixed(1)}km`;
+          const distStr = dist < 0.05 ? 'Nearby' : (dist < 1 ? `${Math.round(dist * 1000)}m` : `${dist.toFixed(1)}km`);
           return `<button type="button" class="enroute-chip" aria-pressed="${isSelected}" data-enroute-pick="${p.id}" title="${esc(p.name)} (${esc(p.area)})">
             <span>${isSelected ? '✓' : '+'} <b>${esc(p.name)}</b></span>
             <span class="chip-dist">${distStr}</span>
@@ -719,7 +719,7 @@ function init() {
       const q = el.search.value.trim().toLowerCase();
       const pool = q ? data.pandals.filter((p) => `${p.name} ${p.area} ${p.station}`.toLowerCase().includes(q)) : [...picked].map((id) => byId.get(id)).filter(Boolean).concat(data.pandals.filter((p) => p.must && !picked.has(p.id)));
       const rows = pool.slice(0, 10);
-      $('[data-picker]').innerHTML = rows.map((p) => `<button type="button" class="pick" aria-pressed="${picked.has(p.id)}" data-pick="${p.id}"><span><b>${esc(p.name)}</b><br><small class="muted">${esc(p.station)} · ${esc(p.area)}</small></span><span aria-hidden="true">${picked.has(p.id) ? '✓' : '+'}</span></button>`).join('') || '<p class="count-note">No matches.</p>';
+      $('[data-picker]').innerHTML = rows.map((p) => `<button type="button" class="pick" aria-pressed="${picked.has(p.id)}" data-pick="${p.id}"><span class="pick-info"><b>${esc(p.name)}</b><small class="muted">${esc(p.station)} · ${esc(p.area)}</small></span><span class="pick-icon" aria-hidden="true">${picked.has(p.id) ? '✓' : '+'}</span></button>`).join('') || '<p class="count-note">No matches.</p>';
       $('[data-picked-note]').textContent = `${picked.size} selected${q ? '' : ': search to add more'}`;
     }
     $('[data-picker]').addEventListener('click', (e) => {
@@ -883,12 +883,12 @@ function init() {
         const prevCoords = i === 0 ? startCoords : getPandalCoords(route[i - 1]);
         const curCoords = getPandalCoords(p);
         const legDist = haversine(prevCoords[0], prevCoords[1], curCoords[0], curCoords[1]);
-        const legDistStr = legDist < 1 ? `${Math.round(legDist * 1000)}m` : `${legDist.toFixed(1)}km`;
-        const legWalkMin = Math.max(3, Math.round(legDist * 12));
+        const legDistStr = legDist < 0.05 ? 'Nearby (~50m)' : (legDist < 1 ? `~${Math.round(legDist * 1000)}m` : `~${legDist.toFixed(1)}km`);
+        const legWalkMin = legDist < 0.05 ? 1 : Math.max(2, Math.round(legDist * 12));
 
-        return `<li class="stop"><div class="stop-card">
+        return `<li class="stop"><span class="stop-num">${i + 1}</span><div class="stop-card">
           <h3><a href="/pandal/${p.id}">${esc(p.name)}</a></h3>
-          <p class="muted" style="font-size:13px">${esc(p.area)} · <span class="leg-dist-badge">${icon('walk')} ~${legDistStr} (${legWalkMin} min)</span></p>
+          <p class="muted" style="font-size:13px">${esc(p.area)} · <span class="leg-dist-badge">${icon('walk')} ${legDistStr} (${legWalkMin} min)</span></p>
           <span class="station"><span class="dot" style="background:${line.color}"></span>${esc(p.station)} Metro${n != null ? ` · ${n === 0 ? 'near start' : n + ' stop' + (n > 1 ? 's' : '') + ' from start'}` : ''}</span>
           <div class="actions"><a class="btn btn-ghost btn-sm" href="${stationToPandalLink(p)}" target="_blank" rel="noopener">${icon('walk')} Walk from station</a>${p.must ? '<span class="tag gold" style="align-self:center">Must visit</span>' : ''}</div>
           <button class="card-check-toggle" type="button" aria-pressed="false" aria-label="Add ${esc(p.name)} to checklist" title="Add to checklist" data-checklist-toggle="${p.id}">${icon('checklist')}</button>
@@ -905,11 +905,6 @@ function init() {
         endCard = `<li class="stop-terminal end"><div class="terminal-card"><span class="terminal-badge end">${endBadge}</span><div class="terminal-info"><b>${endTitle}</b><span class="muted">${endSubtitle}</span></div></div></li>`;
       }
 
-      itin.innerHTML = startCard + stopCards + endCard;
-      syncCheck(itin);
-      const left = route.length - Math.min(shown, route.length);
-      more.hidden = left <= 0; more.textContent = `View more stops (${left} left)`;
-
       function formatLabelForMaps(val, isStation) {
         if (!val) return null;
         const clean = val.trim();
@@ -925,9 +920,22 @@ function init() {
       const startLabel = formatLabelForMaps(startVal, isStartStation);
       const endLabel = endVal ? formatLabelForMaps(endVal, isEndStation) : null;
       const links = routeLinks(route, startLabel, endLabel);
+      const mapsBtnHtml = `<a class="btn btn-primary btn-block" href="${links[0]}" target="_blank" rel="noopener">${icon('map')} Open route in Google Maps${links.length > 1 ? ' (part 1 of ' + links.length + ')' : ''}</a>`;
+
+      summary.innerHTML = `<div class="summary-stats"><div><b>${route.length}</b><span>pandals</span></div>${metroPart}<div><b>~${Math.floor(mins / 60)}h ${mins % 60}m</b><span>estimated</span></div></div><div class="summary-maps-action">${mapsBtnHtml}</div>`;
+
+      const footerCtaCard = `<li class="stop-terminal-cta">${mapsBtnHtml}</li>`;
+      itin.innerHTML = startCard + stopCards + endCard + footerCtaCard;
+      syncCheck(itin);
+      const left = route.length - Math.min(shown, route.length);
+      more.hidden = left <= 0; more.textContent = `View more stops (${left} left)`;
+
       openMaps.href = links[0]; openMaps.innerHTML = `${icon('map')} Open route in Google Maps${links.length > 1 ? ' (part 1 of ' + links.length + ')' : ''}`;
       $$('.extra-part').forEach((n) => n.remove());
       links.slice(1).forEach((u, i) => summary.insertAdjacentHTML('afterend', `<p class="extra-part count-note" style="margin:8px 0">Long route: <a href="${u}" target="_blank" rel="noopener" style="text-decoration:underline">open part ${i + 2} of ${links.length} in Maps</a></p>`));
+      
+      const pwaPrompt = document.querySelector('.install-prompt');
+      if (pwaPrompt) pwaPrompt.classList.remove('show');
       cta.classList.add('show');
       if (focusFrom != null) $$('.stop-card h3 a', itin)[focusFrom]?.focus();
     }

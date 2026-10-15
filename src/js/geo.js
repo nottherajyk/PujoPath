@@ -73,7 +73,9 @@ export const KOLKATA_PLACES = [
   // Rajarhat, Chinar Park & Airport Corridor
   { name: 'Chinar Park', coords: [22.6256, 88.4468], desc: 'Rajarhat Main Road & Tegharia Crossing', badge: 'Hub', terms: ['chinar park', 'chinar', 'tegharia crossing', 'chinar park crossing'] },
   { name: 'City Centre 2', coords: [22.6280, 88.4550], desc: 'Action Area IID · Mall & Parking', badge: 'Mall', terms: ['city centre 2', 'city centre ii', 'cc2', 'action area iid'] },
-  { name: 'Rajarhat Chowmatha', coords: [22.6231, 88.4827], desc: 'Rajarhat Main Rd & 211 Bus Terminus', badge: 'Hub', terms: ['rajarhat chowmatha', 'rajarhat crossing', 'chowmatha rajarhat', 'rajarhat'] },
+  { name: 'Rajarhat Chowmatha', coords: [22.6231, 88.4827], desc: 'Rajarhat Main Rd & 211 Bus Terminus', badge: 'Hub', terms: ['rajarhat chowmatha', 'rajarhat crossing', 'chowmatha rajarhat'] },
+  { name: 'Kalipark', coords: [22.6242, 88.4485], desc: 'Rajarhat Main Rd, Near Chinar Park', badge: 'Place', terms: ['kalipark', 'kali park'] },
+  { name: 'Rajarhat', coords: [22.6231, 88.4827], desc: 'Rajarhat Main Road & Township Hub', badge: 'Hub', terms: ['rajarhat'] },
   { name: 'Dashadrone', coords: [22.6245, 88.4498], desc: 'Rajarhat Main Rd, Near Chinar Park', badge: 'Place', terms: ['dashadrone', 'dasadrone'] },
   { name: 'Tegharia', coords: [22.6220, 88.4410], desc: 'VIP Rd Connector & Rajarhat Road', badge: 'Place', terms: ['tegharia', 'tegharia shitalatala', 'sahabagan'] },
   { name: 'Arjunpur', coords: [22.6170, 88.4350], desc: 'Near Baguiati-Tegharia & Chinar Park', badge: 'Place', terms: ['arjunpur', 'arjunpur amra sabai'] },
@@ -105,7 +107,7 @@ export const KOLKATA_PLACES = [
   { name: 'Baguiati', coords: [22.6140, 88.4285], desc: 'VIP Road Arterial Hub & Joramandir', badge: 'Hub', terms: ['baguiati', 'baguihati', 'joramandir', 'joramandir baguiati'] },
   { name: 'Kestopur', coords: [22.5975, 88.4245], desc: 'VIP Road & Prafulla Kanan', badge: 'Place', terms: ['kestopur', 'krishnapur', 'prafulla kanan'] },
   { name: 'Bangur Avenue', coords: [22.6075, 88.4090], desc: 'VIP Road & Bangur Supermarket', badge: 'Place', terms: ['bangur avenue', 'bangur', 'bangur crossing'] },
-  { name: 'Dum Dum Park', coords: [22.6130, 88.4110], desc: 'VIP Road & Jessore Road Link', badge: 'Place', terms: ['dum dum park', 'dumdum park', 'bharat chakra', 'tarun dal'] },
+  { name: 'Dum Dum Park', coords: [22.6130, 88.4110], desc: 'VIP Road & Jessore Road Link', badge: 'Place', terms: ['dum dum park', 'dumdum park', 'dum dum park bharat chakra', 'dum dum tarun dal'] },
   { name: 'Nagerbazar', coords: [22.6210, 88.4120], desc: 'Dum Dum-Jessore Road Crossroads', badge: 'Hub', terms: ['nagerbazar', 'nager bazar', 'dum dum road'] },
   { name: 'Diamond Plaza Mall', coords: [22.6190, 88.4130], desc: 'Jessore Road · Mall & Parking', badge: 'Mall', terms: ['diamond plaza', 'diamond plaza mall', 'satgachi'] },
   { name: 'Ultadanga', coords: [22.5950, 88.3880], desc: 'Hudco Crossing & Telengabagan', badge: 'Hub', terms: ['ultadanga', 'hudco', 'hudco crossing', 'telengabagan', 'telanga bagan'] },
@@ -191,8 +193,8 @@ export const KOLKATA_PLACES = [
   { name: 'Kasba Bosepukur', coords: [22.5190, 88.3860], desc: 'Bosepukur Sitalatala & Talbagan', badge: 'Place', terms: ['kasba', 'bosepukur', 'sitalatala kasba'] },
   { name: 'Acropolis Mall', coords: [22.5150, 88.3930], desc: 'Rajdanga Main Road · Kasba Mall', badge: 'Mall', terms: ['acropolis', 'acropolis mall', 'rajdanga'] },
   { name: 'Tollygunge Phari', coords: [22.5040, 88.3420], desc: 'Tram Depot & Cinema Studios', badge: 'Hub', terms: ['tollygunge', 'tollygunge phari', 'tolly club'] },
-  { name: 'Kudghat & Netaji', coords: [22.4862, 88.3470], desc: 'Kudghat Pragati Sangha & Chandi Ghosh Rd', badge: 'Place', terms: ['kudghat', 'pragati sangha'] },
-  { name: 'Naktala Udayan Sangha', coords: [22.4674, 88.3619], desc: 'NSC Bose Road · Mega Pandal Hub', badge: 'Place', terms: ['naktala', 'naktala udayan sangha', 'udayan sangha'] },
+  { name: 'Kudghat & Netaji', coords: [22.4862, 88.3470], desc: 'Kudghat Pragati Sangha & Chandi Ghosh Rd', badge: 'Place', terms: ['kudghat', 'kudghat pragati sangha'] },
+  { name: 'Naktala Udayan Sangha', coords: [22.4674, 88.3619], desc: 'NSC Bose Road · Mega Pandal Hub', badge: 'Place', terms: ['naktala', 'naktala udayan sangha'] },
   { name: 'Garia Mahamayatala', coords: [22.4550, 88.3800], desc: 'Garia Crossing & Nabadurga', badge: 'Hub', terms: ['garia', 'garia more', 'mahamayatala', 'garia nabadurga'] },
 
   // South-West & Behala Corridor
@@ -243,18 +245,41 @@ export function matchesTerm(text, term) {
   return regex.test(s);
 }
 
-// Map any pandal to accurate [lat, lng]
+const BROAD_AREAS = new Set([
+  'rajarhat', 'salt lake', 'new town', 'kolkata', 'north kolkata', 'south kolkata', 'central kolkata', 'east kolkata'
+]);
+
+// Map any pandal to accurate [lat, lng] using multi-tier specificity scoring
 export function getPandalCoords(p) {
   if (!p) return [22.5726, 88.3639]; // Default Central Kolkata
 
-  // 1. Check if an area or name matches our place database with word boundaries
-  const area = p.area || '';
   const name = p.name || '';
+  const area = p.area || '';
+  const locality = area.split(',')[0].trim();
+
+  let bestPlace = null;
+  let bestScore = -1;
 
   for (const place of KOLKATA_PLACES) {
-    if (place.terms.some((t) => matchesTerm(name, t) || matchesTerm(area, t))) {
-      return place.coords;
+    for (const term of place.terms) {
+      const isBroad = BROAD_AREAS.has(term.toLowerCase());
+      let score = 0;
+      if (matchesTerm(name, term)) {
+        score = isBroad ? 10 : 300 + term.length * 2;
+      } else if (matchesTerm(locality, term)) {
+        score = isBroad ? 8 : 200 + term.length * 2;
+      } else if (matchesTerm(area, term)) {
+        score = isBroad ? 5 : 50 + term.length;
+      }
+      if (score > bestScore) {
+        bestScore = score;
+        bestPlace = place;
+      }
     }
+  }
+
+  if (bestPlace && bestScore > 0) {
+    return bestPlace.coords;
   }
 
   // 2. Fall back to nearest station coords
