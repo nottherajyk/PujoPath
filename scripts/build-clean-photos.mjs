@@ -7,7 +7,7 @@ const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const OUT_DIR = path.join(ROOT, 'src', 'assets', 'pandals');
 fs.mkdirSync(OUT_DIR, { recursive: true });
 
-const USER_AGENT = 'PujaPathApp/1.0 (https://pujapath.vercel.app; support@pujapath.org)';
+const USER_AGENT = 'PujaPathApp/1.0 (https://pujo-path.vercel.app; support@pujapath.org)';
 
 // 1. Direct verified mappings for iconic Kolkata Durga Pujas
 const VERIFIED_DIRECT = {

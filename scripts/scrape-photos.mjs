@@ -7,7 +7,7 @@ const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const OUT_DIR = path.join(ROOT, 'src', 'assets', 'pandals');
 fs.mkdirSync(OUT_DIR, { recursive: true });
 
-const USER_AGENT = 'PujaPathBot/1.0 (https://pujapath.vercel.app; contact@pujapath.org)';
+const USER_AGENT = 'PujaPathBot/1.0 (https://pujo-path.vercel.app; contact@pujapath.org)';
 
 // Banned keywords to completely eliminate photos of people, crowds, street shoppers, etc.
 const BANNED_PATTERNS = [

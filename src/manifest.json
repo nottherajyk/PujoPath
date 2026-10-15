@@ -1,0 +1,19 @@
+{
+  "name": "PujoPath - Durga Puja 2026 Guide & Metro Route Planner",
+  "short_name": "PujoPath",
+  "description": "Kolkata Durga Puja 2026 pandal guide, nearest metro stations, walking times, and route planner.",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#FAF8F5",
+  "theme_color": "#FAF8F5",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

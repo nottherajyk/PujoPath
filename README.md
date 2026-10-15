@@ -1,6 +1,6 @@
-# PujaPath (পূজাপথ) — Kolkata Durga Puja Guide & Metro Route Planner
+# PujoPath (পূজাপথ) — Kolkata Durga Puja Guide & Metro Route Planner
 
-PujaPath is a fast, responsive, mobile-first web app and cultural guide for Kolkata Durga Puja. It features 195 pandals with nearest metro stations and walking directions, North/South/Central/East hopping circuits, an interactive multi-stop route planner, offline-first local device storage, and a complete Kolkata Metro guide.
+PujoPath is a fast, responsive, mobile-first web app and cultural guide for Kolkata Durga Puja. It features 195 pandals with nearest metro stations and walking directions, North/South/Central/East hopping circuits, an interactive multi-stop route planner, offline-first local device storage, and a complete Kolkata Metro guide.
 
 Built with pure vanilla HTML, modern CSS, and lightweight client-side JavaScript. Zero runtime dependencies, generated statically by Node.js.
 
