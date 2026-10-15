@@ -17,20 +17,22 @@ const store = {
     for (const k in mem) delete mem[k];
   }
 };
+
+// One-time automatic migration of any legacy wishlist items into personal checklist
+try {
+  const legacyWish = store.get('pp_wishlist', []);
+  if (Array.isArray(legacyWish) && legacyWish.length > 0) {
+    const cur = store.get('pp_user_checklist', []);
+    const merged = Array.from(new Set([...cur, ...legacyWish]));
+    store.set('pp_user_checklist', merged);
+    store.remove('pp_wishlist');
+  }
+} catch (e) {}
+
 window.addEventListener('storage', (e) => {
-  if (e.key === 'pp_wishlist') syncWish();
   if (e.key === 'pp_user_checklist' || e.key === 'pp_user_visited' || e.key === 'pp_checklist') syncCheck();
 });
-const wish = {
-  list: () => store.get('pp_wishlist', []),
-  has: (id) => wish.list().includes(id),
-  toggle(id) {
-    const l = wish.list(); const i = l.indexOf(id);
-    if (i >= 0) l.splice(i, 1); else l.push(id);
-    store.set('pp_wishlist', l); return i < 0;
-  },
-  clear() { store.set('pp_wishlist', []); },
-};
+
 const check = {
   items: () => store.get('pp_user_checklist', []),
   visited: () => store.get('pp_user_visited', []),
@@ -100,6 +102,17 @@ const check = {
   toggle: (id) => check.toggleVisited(id)
 };
 
+// Backwards compatibility alias for any legacy scripts
+const wish = {
+  list: () => check.items(),
+  has: (id) => check.hasItem(id),
+  toggle(id) {
+    if (check.hasItem(id)) { check.removeItem(id); return false; }
+    check.addItem(id); return true;
+  },
+  clear() { check.clear(); }
+};
+
 /* ---------- UI helpers ---------- */
 let toastTimer;
 function toast(msg) {
@@ -107,18 +120,29 @@ function toast(msg) {
   t.textContent = msg; t.classList.add('show');
   clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
 }
-function syncWish(root = document) {
-  const l = new Set(wish.list());
-  $$('[data-heart]', root).forEach((b) => b.setAttribute('aria-pressed', String(l.has(b.dataset.heart))));
-  $$('[data-wish-count]').forEach((b) => { b.textContent = l.size; b.dataset.count = l.size; });
-}
 function syncCheck(root = document) {
   const items = new Set(check.items());
   const vis = new Set(check.visited());
-  $$('[data-check-count]').forEach((b) => {
-    b.textContent = vis.size;
-    b.dataset.count = vis.size;
-    b.title = `${vis.size} visited of ${items.size} in checklist`;
+  $$('[data-check-count], [data-wish-count]').forEach((b) => {
+    b.textContent = items.size;
+    b.dataset.count = items.size;
+    b.title = `${items.size} in checklist (${vis.size} visited)`;
+  });
+  $$('[data-checklist-toggle], [data-heart]', root).forEach((b) => {
+    const id = b.dataset.checklistToggle || b.dataset.heart;
+    const inCheck = items.has(id);
+    b.setAttribute('aria-pressed', String(inCheck));
+    b.classList.toggle('is-in-checklist', inCheck);
+    b.title = inCheck ? 'In your checklist (tap to remove)' : 'Add to checklist';
+    b.setAttribute('aria-label', inCheck ? 'Remove from checklist' : 'Add to checklist');
+    const label = b.querySelector('.checklist-btn-label');
+    if (label) {
+      if (b.classList.contains('btn-detail-check-toggle')) {
+        label.textContent = inCheck ? '✓ In your checklist (tap to remove)' : 'Add to my checklist';
+      } else {
+        label.textContent = inCheck ? '✓ In Checklist' : 'Add to Checklist';
+      }
+    }
   });
   $$('[data-check-visit], [data-check-toggle]', root).forEach((b) => {
     const id = b.dataset.checkVisit || b.dataset.checkToggle;
@@ -129,14 +153,23 @@ function syncCheck(root = document) {
     if (label) label.textContent = isDone ? '✓ Visited' : 'Mark Visited';
   });
 }
+function syncWish(root = document) {
+  syncCheck(root);
+}
 document.addEventListener('click', (e) => {
-  const heartBtn = e.target.closest('[data-heart]');
-  if (heartBtn) {
+  const cardCheckBtn = e.target.closest('[data-checklist-toggle], [data-heart]');
+  if (cardCheckBtn) {
     e.preventDefault();
-    const on = wish.toggle(heartBtn.dataset.heart);
-    syncWish();
-    toast(on ? 'Saved to wishlist' : 'Removed from wishlist');
-    document.dispatchEvent(new CustomEvent('wish-change', { detail: { id: heartBtn.dataset.heart, on } }));
+    const id = cardCheckBtn.dataset.checklistToggle || cardCheckBtn.dataset.heart;
+    if (check.hasItem(id)) {
+      check.removeItem(id);
+      syncCheck();
+      toast('Removed from checklist');
+    } else {
+      check.addItem(id);
+      syncCheck();
+      toast('Added to checklist');
+    }
     return;
   }
   const checkBtn = e.target.closest('[data-check-visit], [data-check-toggle]');
@@ -157,7 +190,6 @@ document.addEventListener('click', (e) => {
     return;
   }
 });
-syncWish();
 syncCheck();
 
 const params = new URLSearchParams(location.search);
@@ -197,7 +229,8 @@ function init() {
   }
   const hop = (a, b) => hopsFrom(a).get(b) ?? 30;
 
-  const render = { pandals, hopping, planner, wishlist, checklist, metro, map, home, support, pandal }[page];
+  if (page === 'wishlist') { location.replace('/checklist'); return; }
+  const render = { pandals, hopping, planner, checklist, metro, map, home, support, pandal, parking }[page];
   render?.();
 
   /* ================= PANDALS ================= */
@@ -234,7 +267,7 @@ function init() {
     function draw(focusFrom) {
       const slice = results.slice(0, shown);
       list.innerHTML = slice.length ? slice.map((p) => cardHTML(p, ctx)).join('') : `<div class="empty" style="grid-column:1/-1"><h3>No pandals match</h3><p>Try a different spelling, area or metro station.</p><button class="btn btn-primary" type="button" data-reset-inline>Clear filters</button></div>`;
-      syncWish(list);
+      syncCheck(list);
       const left = results.length - slice.length;
       more.hidden = left <= 0; note.textContent = left > 0 ? `${left} more to explore` : '';
       more.textContent = `View more pandals`;
@@ -257,7 +290,7 @@ function init() {
     function draw(focusFrom) {
       const slice = items.slice(0, shown);
       list.innerHTML = slice.map((p) => cardHTML(p, ctx)).join('');
-      syncWish(list);
+      syncCheck(list);
       const left = items.length - slice.length;
       more.hidden = left <= 0; note.textContent = left > 0 ? `${left} more stops in this zone` : `All ${items.length} stops shown`;
       if (focusFrom != null) $$('.card h3 a', list)[focusFrom]?.focus();
@@ -388,8 +421,7 @@ function init() {
 
     // deep links
     if (params.get('zone') && ctx.zones[params.get('zone')]) { mode = 'zone'; el.zone.value = params.get('zone'); }
-    if (params.get('checklist')) { mode = 'custom'; picked = new Set(check.items()); }
-    else if (params.get('wish')) { mode = 'custom'; picked = new Set(wish.list()); }
+    if (params.get('checklist') || params.get('wish')) { mode = 'custom'; picked = new Set(check.items()); }
     if (params.get('add') && byId.has(params.get('add'))) { mode = 'custom'; picked.add(params.get('add')); }
 
     function saveDraft() {
@@ -433,7 +465,13 @@ function init() {
       drawPicker();
     });
     el.search.addEventListener('input', drawPicker);
-    $('[data-use-wish]').addEventListener('click', () => { wish.list().forEach((id) => picked.add(id)); saveDraft(); drawPicker(); toast(`${wish.list().length} wishlist pandals added`); });
+    const useChecklistBtn = $('[data-use-checklist]') || $('[data-use-wish]');
+    useChecklistBtn?.addEventListener('click', () => {
+      check.items().forEach((id) => picked.add(id));
+      saveDraft();
+      drawPicker();
+      toast(`${check.items().length} checklist pandals added`);
+    });
 
     function build() {
       const start = resolveStation(el.start.value);
@@ -516,14 +554,14 @@ function init() {
           <p class="muted" style="font-size:13px">${esc(p.area)}</p>
           <span class="station"><span class="dot" style="background:${line.color}"></span>${esc(p.station)} Metro${n != null ? ` · ${n === 0 ? 'your start' : n + ' station' + (n > 1 ? 's' : '') + ' from start'}` : ''}</span>
           <div class="actions"><a class="btn btn-ghost btn-sm" href="${stationToPandalLink(p)}" target="_blank" rel="noopener">${icon('walk')} Walk from station</a>${p.must ? '<span class="tag gold" style="align-self:center">Must visit</span>' : ''}</div>
-          <button class="heart" type="button" aria-pressed="false" aria-label="Save ${esc(p.name)} to wishlist" data-heart="${p.id}">${icon('heart', '')}</button>
+          <button class="card-check-toggle" type="button" aria-pressed="false" aria-label="Add ${esc(p.name)} to checklist" title="Add to checklist" data-checklist-toggle="${p.id}">${icon('checklist')}</button>
         </div></li>`;
       }).join('');
 
       const endCard = end ? `<li class="stop-terminal end"><div class="terminal-card"><span class="terminal-badge end">Finish</span><div class="terminal-info"><b>${esc(end)} Metro Station</b><span class="muted">Finish route & head home (~${hop(route.at(-1).station, end)} metro stops from last stop)</span></div></div></li>` : '';
 
       itin.innerHTML = startCard + stopCards + endCard;
-      syncWish(itin);
+      syncCheck(itin);
       const left = route.length - Math.min(shown, route.length);
       more.hidden = left <= 0; more.textContent = `View more stops (${left} left)`;
 
@@ -545,20 +583,7 @@ function init() {
 
   /* ================= WISHLIST ================= */
   function wishlist() {
-    const list = $('[data-list]'), empty = $('[data-empty]'), more = $('[data-more]'), actions = $('[data-wish-actions]');
-    let shown = PAGE;
-    function draw(focusFrom) {
-      const items = wish.list().map((id) => byId.get(id)).filter(Boolean);
-      empty.hidden = items.length > 0; actions.hidden = !items.length;
-      list.innerHTML = items.slice(0, shown).map((p) => cardHTML(p, ctx)).join('');
-      syncWish(list);
-      const left = items.length - shown; more.hidden = left <= 0; more.textContent = `View more (${left} left)`;
-      if (focusFrom != null) $$('.card h3 a', list)[focusFrom]?.focus();
-    }
-    document.addEventListener('wish-change', () => draw());
-    more.addEventListener('click', () => { const f = shown; shown += PAGE; draw(f); });
-    $('[data-clear]').addEventListener('click', () => { if (confirm('Remove all saved pandals?')) { wish.clear(); draw(); syncWish(); } });
-    draw();
+    location.replace('/checklist');
   }
 
   /* ================= CHECKLIST (PERSONAL HOPPING TRACKER) ================= */
@@ -595,9 +620,11 @@ function init() {
     let shown = PAGE;
 
     const iconicIds = [
-      'sreebhumi-sporting-club', 'santosh-mitra-square', 'bagbazar-sarbojanin',
-      'ahiritola-sarbojanin', 'college-square', 'suruchi-sangha',
-      'chetla-agrani-club', 'tridhara-sammilani', 'ballygunge-cultural-association',
+      'tridhara-sammilani', 'sreebhumi-sporting-club', 'sree-bhumi-sporting-club',
+      'santosh-mitra-square', 'santosh-mitra-square-lebutala', 'bagbazar-sarbojanin',
+      'bagbazar-sarbojanin-durgotsav', 'ahiritola-sarbojanin', 'ahiritola-sarbojanin-durgotsav',
+      'college-square', 'suruchi-sangha',
+      'chetla-agrani-club', 'ballygunge-cultural-association',
       'mudiali-club'
     ];
 
@@ -623,12 +650,6 @@ function init() {
         } else {
           progressText.textContent = `${pct}% completed · ${visitedCount} of ${totalCount} pandals visited`;
         }
-      }
-
-      if (addWishBtn) {
-        const wishLen = wish.list().length;
-        addWishBtn.hidden = wishLen === 0;
-        if (wishLen > 0) addWishBtn.textContent = `❤️ + From Wishlist (${wishLen})`;
       }
     }
 
@@ -716,23 +737,49 @@ function init() {
       addSearchInput.addEventListener('input', drawAddPicker);
     }
 
+    function hideAddPanel() {
+      if (!addPanel) return;
+      addPanel.hidden = true;
+      if (toggleAddPanelBtn) {
+        toggleAddPanelBtn.innerHTML = `${icon('plus')} Add Pandals`;
+        toggleAddPanelBtn.setAttribute('aria-expanded', 'false');
+        toggleAddPanelBtn.classList.remove('btn-done-mode');
+      }
+      const controls = $('[data-check-controls]');
+      if (controls && check.items().length > 0) {
+        controls.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    function showAddPanel() {
+      if (!addPanel) return;
+      addPanel.hidden = false;
+      if (toggleAddPanelBtn) {
+        toggleAddPanelBtn.innerHTML = `${icon('check')} Done Adding`;
+        toggleAddPanelBtn.setAttribute('aria-expanded', 'true');
+        toggleAddPanelBtn.classList.add('btn-done-mode');
+      }
+      drawAddPicker();
+      if (addSearchInput) addSearchInput.focus();
+    }
+
     if (toggleAddPanelBtn && addPanel) {
       toggleAddPanelBtn.addEventListener('click', () => {
-        const willShow = addPanel.hidden;
-        addPanel.hidden = !willShow;
-        toggleAddPanelBtn.setAttribute('aria-expanded', String(willShow));
-        if (willShow) {
-          drawAddPicker();
-          if (addSearchInput) addSearchInput.focus();
+        if (addPanel.hidden) {
+          showAddPanel();
+        } else {
+          hideAddPanel();
         }
       });
     }
 
-    if (closeAddPanelBtn && addPanel) {
-      closeAddPanelBtn.addEventListener('click', () => {
-        addPanel.hidden = true;
-        if (toggleAddPanelBtn) toggleAddPanelBtn.setAttribute('aria-expanded', 'false');
-      });
+    if (closeAddPanelBtn) {
+      closeAddPanelBtn.addEventListener('click', hideAddPanel);
+    }
+
+    const closeAddPanelBottomBtn = $('[data-close-add-panel-bottom]');
+    if (closeAddPanelBottomBtn) {
+      closeAddPanelBottomBtn.addEventListener('click', hideAddPanel);
     }
 
     quickAddBtns.forEach((btn) => {
@@ -752,14 +799,17 @@ function init() {
         } else if (type === 'central') {
           idsToAdd = data.pandals.filter((p) => p.zone === 'central').slice(0, 15).map((p) => p.id);
           label = 'Central Heritage pandals';
-        } else if (type === 'wish') {
-          idsToAdd = wish.list();
-          label = `${idsToAdd.length} wishlist pandals`;
+        } else if (type === 'east') {
+          idsToAdd = data.pandals.filter((p) => p.zone === 'east').slice(0, 15).map((p) => p.id);
+          label = 'East & Salt Lake pandals';
+        } else if (type === 'bonedi') {
+          idsToAdd = data.pandals.filter((p) => p.bonedi).slice(0, 15).map((p) => p.id);
+          label = 'Bonedi Bari heritage pujas';
         }
         if (idsToAdd.length) {
           const added = check.addMultiple(idsToAdd);
           toast(`Added ${label} to your checklist (${added} new)`);
-          drawAddPicker();
+          hideAddPanel();
           draw();
         }
       });
@@ -789,7 +839,7 @@ function init() {
       emptyAddIconic.addEventListener('click', () => {
         check.addMultiple(iconicIds);
         toast('Added 10 iconic pandals to your checklist');
-        drawAddPicker();
+        hideAddPanel();
         draw();
       });
     }
@@ -797,9 +847,7 @@ function init() {
     const emptyOpenSearch = $('[data-empty-open-search]');
     if (emptyOpenSearch && addPanel) {
       emptyOpenSearch.addEventListener('click', () => {
-        addPanel.hidden = false;
-        drawAddPicker();
-        if (addSearchInput) addSearchInput.focus();
+        showAddPanel();
       });
     }
 
@@ -878,6 +926,7 @@ function init() {
         if (confirm('Clear all pandals from your checklist?')) {
           check.clear();
           syncCheck();
+          hideAddPanel();
           drawAddPicker();
           draw();
           toast('Checklist cleared');
@@ -999,16 +1048,17 @@ function init() {
 
   /* ================= SUPPORT ================= */
   function support() {
-    const wishEl = $('[data-stat-wish]');
+    const checkEl = $('[data-stat-check]') || $('[data-stat-wish]');
     const planEl = $('[data-stat-plan]');
     const recentEl = $('[data-stat-recent]');
     const clearBtn = $('[data-clear-local]');
 
     function refreshStats() {
-      const w = store.get('pp_wishlist', []);
+      const items = check.items();
+      const visited = check.visited();
       const p = store.get('pp_plan', null);
       const r = store.get('pp_recent', []);
-      if (wishEl) wishEl.textContent = `${w.length} saved pandal${w.length === 1 ? '' : 's'}`;
+      if (checkEl) checkEl.textContent = `${items.length} in checklist (${visited.length} visited)`;
       if (planEl) {
         if (p && (p.picked?.length || p.zone || p.line)) {
           planEl.textContent = p.mode === 'custom' ? `Custom route (${p.picked?.length || 0} stops)` : `${p.zone ? ctx.zones[p.zone]?.title || p.zone : p.line || 'Configured'} route`;
@@ -1024,7 +1074,8 @@ function init() {
       clearBtn.addEventListener('click', () => {
         if (confirm('Clear all your locally saved pandals, routes and preferences from this device?')) {
           store.clearApp();
-          syncWish();
+          check.clear();
+          syncCheck();
           refreshStats();
           toast('Local data cleared from this browser');
         }
@@ -1040,6 +1091,45 @@ function init() {
       const recents = store.get('pp_recent', []).filter((x) => x !== id);
       recents.unshift(id);
       store.set('pp_recent', recents.slice(0, 20));
+    }
+  }
+
+  /* ================= PARKING ================= */
+  function parking() {
+    const searchInput = $('[data-parking-search]');
+    const chips = $$('[data-parking-chips] button');
+    const cards = $$('[data-parking-grid] .parking-dir-card');
+    let currentZone = '';
+    let searchQuery = '';
+
+    function filterParking() {
+      const q = searchQuery.toLowerCase().trim();
+      cards.forEach((card) => {
+        const matchesZone = !currentZone || card.dataset.zone === currentZone;
+        const cardText = `${card.dataset.name} ${card.dataset.serves} ${card.dataset.address}`.toLowerCase();
+        const matchesQuery = !q || cardText.includes(q);
+        card.style.display = matchesZone && matchesQuery ? '' : 'none';
+      });
+    }
+
+    chips.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        chips.forEach((c) => c.setAttribute('aria-pressed', 'false'));
+        btn.setAttribute('aria-pressed', 'true');
+        currentZone = btn.dataset.zone || '';
+        filterParking();
+      });
+    });
+
+    if (searchInput) {
+      let t;
+      searchInput.addEventListener('input', () => {
+        clearTimeout(t);
+        t = setTimeout(() => {
+          searchQuery = searchInput.value;
+          filterParking();
+        }, 120);
+      });
     }
   }
 }
@@ -1101,6 +1191,17 @@ window.addEventListener('pageshow', () => {
 });
 
 document.addEventListener('click', (e) => {
+  const scrollBtn = e.target.closest('.scroll-down-btn');
+  if (scrollBtn) {
+    e.preventDefault();
+    const target = document.querySelector('#spotlight') || document.querySelector('.home-sheet');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      try { history.replaceState(null, '', '#spotlight'); } catch {}
+    }
+    return;
+  }
+
   if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
   const a = e.target.closest('a[href]');
   if (!a) return;
@@ -1121,15 +1222,17 @@ document.addEventListener('click', (e) => {
   } catch {}
 });
 
-/* ---------- Scroll visibility for Header and Bottom Nav (60/120fps optimized) ---------- */
+/* ---------- Scroll visibility for Header, Bottom Nav, and Hero Scroll Cue (60/120fps optimized) ---------- */
 function initScrollUI() {
   const nav = $('.bottom-nav');
   const header = $('.site-header');
-  if (!nav && !header) return;
+  const heroCue = $('.hero-bottom-cue');
+  if (!nav && !header && !heroCue) return;
 
   let ticking = false;
   let lastNavVisible = null;
   let lastHeaderScrolled = null;
+  let lastHeroCueHidden = null;
   let isShortPage = false;
 
   const checkShortPage = () => {
@@ -1141,6 +1244,14 @@ function initScrollUI() {
   const update = () => {
     ticking = false;
     const y = window.scrollY || document.documentElement.scrollTop;
+
+    if (heroCue) {
+      const hideCue = (y > 20);
+      if (hideCue !== lastHeroCueHidden) {
+        lastHeroCueHidden = hideCue;
+        heroCue.classList.toggle('is-hidden', hideCue);
+      }
+    }
 
     if (nav) {
       const showNav = (y > 60 || isShortPage);

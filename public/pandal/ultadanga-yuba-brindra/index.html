@@ -64,6 +64,8 @@
 <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
 <symbol id="i-expand" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
 <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/></symbol>
+<symbol id="i-car" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 3c-.1.2-.1.4-.1.6v4.5c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></symbol>
+<symbol id="i-parking" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" stroke-width="2"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 <symbol id="i-lotus" viewBox="0 0 64 64"><path d="M32 8c5 8 6 16 0 27-6-11-5-19 0-27zM12 22c9 1 16 6 19 15-9 1-16-3-19-15zM52 22c-3 12-10 16-19 15 3-9 10-14 19-15zM6 38c10-2 18 1 24 8-10 4-19 1-24-8zM58 38c-5 9-14 12-24 8 6-7 14-10 24-8zM32 50c-8 0-15 3-20 8h40c-5-5-12-8-20-8z"/></symbol>
 </svg>
 <a class="sr-only" href="#main">Skip to content</a>
@@ -71,15 +73,14 @@
   <a class="brand" href="/" aria-label="PujoPath home"><svg class="lotus" aria-hidden="true"><use href="#i-lotus"/></svg><span>Pujo<b>Path</b></span></a>
   <nav class="top-links" aria-label="Primary"><a href="/">Home</a><a href="/pandals" aria-current="page">Explore</a><a href="/metro">Metro</a><a href="/support">Support</a></nav>
   <div class="head-actions">
-    <a class="head-btn head-check" href="/checklist" aria-label="Pandal Checklist" title="Visited Pandals Checklist"><svg class="icon" aria-hidden="true"><use href="#i-checklist"/></svg><span class="badge badge-check" data-check-count data-count="0">0</span></a>
-    <a class="head-btn head-wish" href="/wishlist" aria-label="Wishlist" title="Saved Wishlist"><svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg><span class="badge" data-wish-count data-count="0">0</span></a>
+    <a class="head-btn head-check" href="/checklist" aria-label="Pandal Checklist" title="My Pandal Checklist"><svg class="icon" aria-hidden="true"><use href="#i-checklist"/></svg><span class="badge badge-check" data-check-count data-count="0">0</span></a>
   </div>
 </div></header>
 <main id="main">
 <div class="detail-hero">
   <img src="/assets/pandals/ultadanga-yuba-brindra.jpg" alt="Ultadanga Yuba Brindra Durga Puja pandal" decoding="async" width="1200" height="630">
   <a class="back" href="/pandals" aria-label="Back to pandals"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg></a>
-  <button class="heart" type="button" aria-pressed="false" aria-label="Save Ultadanga Yuba Brindra to wishlist" data-heart="ultadanga-yuba-brindra"><svg class="" aria-hidden="true"><use href="#i-heart"/></svg></button>
+  <button class="card-check-toggle" type="button" aria-pressed="false" aria-label="Add Ultadanga Yuba Brindra to checklist" title="Add to checklist" data-checklist-toggle="ultadanga-yuba-brindra"><svg class="icon" aria-hidden="true"><use href="#i-checklist"/></svg></button>
 </div>
 <div class="detail-body"><div class="wrap">
   <p class="crumbs"><a href="/">Home</a> / <a href="/pandals">Pandals</a> / Ultadanga Yuba Brindra</p>
@@ -88,6 +89,7 @@
   <p class="muted" style="margin-top:6px">Ultadanga, Kolkata</p>
   <div style="margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
     <button class="btn btn-sm btn-check-action" type="button" data-check-toggle="ultadanga-yuba-brindra" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span class="check-label">Mark as Visited</span></button>
+    <button class="btn btn-sm btn-add-checklist" type="button" data-checklist-toggle="ultadanga-yuba-brindra" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-checklist"/></svg><span class="checklist-btn-label">Add to Checklist</span></button>
   </div>
   
   <div class="info">
@@ -95,7 +97,57 @@
     <div class="row"><svg class="icon" aria-hidden="true"><use href="#i-walk"/></svg><div><b>Walking time varies</b><span>Open directions for the live walking time</span></div></div>
   </div>
   <div class="btn-row"><a class="btn btn-primary" href="https://www.google.com/maps/dir/?api=1&origin=Shyambazar%20Metro%20Station%2C%20Kolkata&destination=Ultadanga%20Yuba%20Brindra%2C%20Ultadanga%2C%20Kolkata&travelmode=walking" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-route"/></svg> Directions</a><a class="btn btn-ghost" href="https://www.google.com/maps/search/?api=1&query=Ultadanga%20Yuba%20Brindra%2C%20Ultadanga%2C%20Kolkata" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg> View on Maps</a></div>
-  <a class="btn btn-ghost btn-block" style="margin-top:12px" href="/planner?add=ultadanga-yuba-brindra"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg> Add to my route</a>
+  <button class="btn btn-ghost btn-block btn-detail-check-toggle" type="button" data-checklist-toggle="ultadanga-yuba-brindra" aria-pressed="false" style="margin-top:10px"><svg class="icon" aria-hidden="true"><use href="#i-checklist"/></svg><span class="checklist-btn-label">Add to my checklist</span></button>
+  <a class="btn btn-ghost btn-block" style="margin-top:10px" href="/planner?add=ultadanga-yuba-brindra"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg> Add to my route</a>
+
+  <section class="parking-section" aria-labelledby="parking-head-ultadanga-yuba-brindra">
+    <div class="parking-panel">
+      <div class="parking-card-head">
+        <div class="parking-title-group">
+          <span class="parking-badge-icon" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#i-car"/></svg></span>
+          <div>
+            <h2 id="parking-head-ultadanga-yuba-brindra" class="parking-title">Nearby Parking (Cars &amp; Bikes)</h2>
+            <span class="parking-subtitle">Shortlisted spots under 2 km radius for road travelers</span>
+          </div>
+        </div>
+        <span class="parking-radius-tag">&lt; 2 km radius</span>
+      </div>
+      <div class="parking-items">
+        
+          <div class="parking-item">
+            <div class="parking-item-main">
+              <div class="parking-lot-icon" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#i-parking"/></svg></div>
+              <div class="parking-info">
+                <b class="parking-lot-name">Bidhannagar Road Station Parking</b>
+                <p class="parking-address">CIT Scheme VII M, Ultadanga, Kolkata 700067</p>
+                <span class="parking-serves"><b>Serves:</b> Ultadanga, Telengabagan, Dakshindari &amp; Golaghata</span>
+              </div>
+            </div>
+            <a class="btn btn-parking" href="https://maps.google.com/?cid=893884134115233129" target="_blank" rel="noopener">
+              <svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg> Open Location
+            </a>
+          </div>
+        
+          <div class="parking-item">
+            <div class="parking-item-main">
+              <div class="parking-lot-icon" aria-hidden="true"><svg class="icon" aria-hidden="true"><use href="#i-parking"/></svg></div>
+              <div class="parking-info">
+                <b class="parking-lot-name">Car Parking Area, R.G. Kar Medical College</b>
+                <p class="parking-address">16/B, Bidhan Sarani, Shyam Bazar, Kolkata 700004</p>
+                <span class="parking-serves"><b>Serves:</b> Shyambazar North &amp; Belgachia</span>
+              </div>
+            </div>
+            <a class="btn btn-parking" href="https://maps.google.com/?cid=5987645238586288916" target="_blank" rel="noopener">
+              <svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg> Open Location
+            </a>
+          </div>
+        
+      </div>
+      <div class="parking-footer-links">
+        <a class="parking-dir-link" href="/parking"><svg class="icon" aria-hidden="true"><use href="#i-car"/></svg> View all 25 Kolkata Pujo parking lots →</a>
+      </div>
+    </div>
+  </section>
   <section class="section"><div class="section-head"><h2 style="font-size:22px">Also near Shyambazar</h2></div><div class="list"><article class="card" data-id="tala-prattay">
   <div class="thumb"><img src="/assets/pandals/tala-prattay.jpg" alt="Tala Prattay Durga Puja pandal, Tala, Shyambazar" loading="lazy" decoding="async" width="400" height="300"></div>
   <div class="body">
@@ -108,7 +160,7 @@
     </div>
     
   </div>
-  <button class="heart" type="button" aria-pressed="false" aria-label="Save Tala Prattay to wishlist" data-heart="tala-prattay"><svg class="" aria-hidden="true"><use href="#i-heart"/></svg></button>
+  <button class="card-check-toggle" type="button" aria-pressed="false" aria-label="Add Tala Prattay to checklist" title="Add to checklist" data-checklist-toggle="tala-prattay"><svg class="icon" aria-hidden="true"><use href="#i-checklist"/></svg></button>
 </article><article class="card" data-id="north-tridhara">
   <div class="thumb"><img src="/assets/pandals/north-tridhara.jpg" alt="North Tridhara Durga Puja pandal, Shyambazar" loading="lazy" decoding="async" width="400" height="300"></div>
   <div class="body">
@@ -121,7 +173,7 @@
     </div>
     
   </div>
-  <button class="heart" type="button" aria-pressed="false" aria-label="Save North Tridhara to wishlist" data-heart="north-tridhara"><svg class="" aria-hidden="true"><use href="#i-heart"/></svg></button>
+  <button class="card-check-toggle" type="button" aria-pressed="false" aria-label="Add North Tridhara to checklist" title="Add to checklist" data-checklist-toggle="north-tridhara"><svg class="icon" aria-hidden="true"><use href="#i-checklist"/></svg></button>
 </article><article class="card" data-id="kabitog-bagan">
   <div class="thumb"><img src="/assets/pandals/kabitog-bagan.jpg" alt="Kabitog Bagan Durga Puja pandal, Shyambazar" loading="lazy" decoding="async" width="400" height="300"></div>
   <div class="body">
@@ -134,7 +186,7 @@
     </div>
     
   </div>
-  <button class="heart" type="button" aria-pressed="false" aria-label="Save Kabitog Bagan to wishlist" data-heart="kabitog-bagan"><svg class="" aria-hidden="true"><use href="#i-heart"/></svg></button>
+  <button class="card-check-toggle" type="button" aria-pressed="false" aria-label="Add Kabitog Bagan to checklist" title="Add to checklist" data-checklist-toggle="kabitog-bagan"><svg class="icon" aria-hidden="true"><use href="#i-checklist"/></svg></button>
 </article><article class="card" data-id="nalin-sarkar-street">
   <div class="thumb"><img src="/assets/pandals/nalin-sarkar-street.jpg" alt="Nalin Sarkar Street Durga Puja pandal, Shyambazar" loading="lazy" decoding="async" width="400" height="300"></div>
   <div class="body">
@@ -147,7 +199,7 @@
     </div>
     
   </div>
-  <button class="heart" type="button" aria-pressed="false" aria-label="Save Nalin Sarkar Street to wishlist" data-heart="nalin-sarkar-street"><svg class="" aria-hidden="true"><use href="#i-heart"/></svg></button>
+  <button class="card-check-toggle" type="button" aria-pressed="false" aria-label="Add Nalin Sarkar Street to checklist" title="Add to checklist" data-checklist-toggle="nalin-sarkar-street"><svg class="icon" aria-hidden="true"><use href="#i-checklist"/></svg></button>
 </article></div></section>
 </div></div>
 </main>
@@ -161,7 +213,9 @@
       <a href="/pandals">Pandals</a>
       <a href="/hopping">Zones</a>
       <a href="/planner">Planner</a>
+      <a href="/checklist">Checklist</a>
       <a href="/metro">Metro</a>
+      <a href="/parking">Parking</a>
       <a href="/map">Map</a>
       <a href="/support">Support</a>
       <a href="/privacy">Privacy</a>

@@ -94,6 +94,6 @@ export function cardHTML(p, ctx, opts = {}) {
     </div>
     ${actionButtons}
   </div>
-  <button class="heart" type="button" aria-pressed="false" aria-label="Save ${esc(p.name)} to wishlist" data-heart="${p.id}">${icon('heart', '')}</button>
+  ${opts.isChecklistPage ? '' : `<button class="card-check-toggle" type="button" aria-pressed="false" aria-label="Add ${esc(p.name)} to checklist" title="Add to checklist" data-checklist-toggle="${p.id}">${icon('checklist')}</button>`}
 </article>`;
 }

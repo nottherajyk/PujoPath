@@ -1,6 +1,5 @@
 User-agent: *
 Allow: /
-Disallow: /wishlist
 Disallow: /checklist
 
 Sitemap: https://pujo-path.vercel.app/sitemap.xml

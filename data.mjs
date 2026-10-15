@@ -89,6 +89,250 @@ export const ZONES = {
   bonedi:  { label: 'Bonedi Bari',     title: 'Bonedi Bari',      blurb: 'Aristocratic family pujas, centuries old',     hub: 'Sovabazar & Girish Park',   lines: 'Blue Line' },
 };
 
+// Shortlisted car & bike parking lots under 2km radius with verified Google Maps links
+export const PARKING_LOTS = [
+  {
+    id: 'city-centre-1',
+    name: 'City Centre - 1 Parking Lot',
+    serves: 'Lake Town, Sree Bhumi & Salt Lake border',
+    address: 'DC Block, Sector 1, Bidhannagar, Kolkata 700064',
+    mapUrl: 'https://maps.google.com/?cid=17563295945850330939',
+    zone: 'east',
+    matchTerms: ['lake town', 'sree bhumi', 'salt lake', 'bidhannagar', 'city centre', 'block a, lake town', 'nutan palli, lake town', 'central park', 'karunamoyee', 'sector v', 'new town', 'action area', 'labony', 'fd block', 'bj block', 'aj block', 'ak block', 'al block', 'bc block', 'cf block', 'ec block', 'hb block', 'ia block', 'bf block']
+  },
+  {
+    id: 'bidhannagar-road-station',
+    name: 'Bidhannagar Road Station Parking',
+    serves: 'Ultadanga, Telengabagan, Dakshindari & Golaghata',
+    address: 'CIT Scheme VII M, Ultadanga, Kolkata 700067',
+    mapUrl: 'https://maps.google.com/?cid=893884134115233129',
+    zone: 'north',
+    matchTerms: ['ultadanga', 'telengabagan', 'telanga bagan', 'dakshindari', 'golaghata', 'gouriberia', 'karbagan', 'kabiraj bagan', 'bidhan sangha', 'sangrami']
+  },
+  {
+    id: 'mani-square-mall',
+    name: 'Mani Square Mall Parking Lot',
+    serves: 'Kankurgachi, Phoolbagan & Ultadanga South',
+    address: '164/1 Maniktala Main Rd, EM Bypass, Kankurgachi, Kolkata 700054',
+    mapUrl: 'https://maps.google.com/?cid=4614353597257699488',
+    zone: 'east',
+    matchTerms: ['kankurgachi', 'kakurgachi', 'phoolbagan', 'beleghata', 'subhas sarobar', 'duttabad', 'chingrighata', 'sukanta nagar']
+  },
+  {
+    id: 'kolkata-railway-station',
+    name: 'Kolkata Railway Station Parking',
+    serves: 'Tala, Belgachia & Paikpara',
+    address: 'Kolkata Station Rd, Belgachia, Kolkata 700037',
+    mapUrl: 'https://maps.google.com/?cid=2467030707804026516',
+    zone: 'north',
+    matchTerms: ['tala prattay', 'tala palli', 'tala park', 'tala baroari', 'paikpara', 'belgachia sadharan']
+  },
+  {
+    id: 'belgachia-jheel',
+    name: 'Belgachia Jheel Parking',
+    serves: 'Belgachia, Tala Park & Lalabagan',
+    address: 'Belgachia, Kolkata 700037',
+    mapUrl: 'https://maps.google.com/?cid=14986285677002004469',
+    zone: 'north',
+    matchTerms: ['belgachia', 'tala park', 'lalabagan', 'patipukur', 'basak bagan']
+  },
+  {
+    id: 'rg-kar-medical-college',
+    name: 'Car Parking Area, R.G. Kar Medical College',
+    serves: 'Shyambazar North & Belgachia',
+    address: '16/B, Bidhan Sarani, Shyam Bazar, Kolkata 700004',
+    mapUrl: 'https://maps.google.com/?cid=5987645238586288916',
+    zone: 'north',
+    matchTerms: ['north tridhara', 'kabitog bagan', 'friends union', 'nabin sangha', 'shyambazar']
+  },
+  {
+    id: 'shyambazar-bidhan-sarani',
+    name: 'Car Parking Space - Shyambazar Bidhan Sarani',
+    serves: 'Hatibagan, Kashi Bose Lane & Nalin Sarkar St',
+    address: '11/5B, Bidhan Sarani, Shyam Bazar, Kolkata 700003',
+    mapUrl: 'https://maps.google.com/?cid=11684868646659812281',
+    zone: 'north',
+    matchTerms: ['hatibagan', 'halitbagan', 'kashi bose', 'kashibose', 'nalin sarkar', 'sikdar bagan', 'bidhan sarani', 'gouribari']
+  },
+  {
+    id: 'bagbazar-launch-ghat',
+    name: 'Bagbazar Launch Ghat Parking',
+    serves: 'Bagbazar, Kumartuli & Shyambazar West',
+    address: 'Strand Bank Rd, Baghbazar, Kolkata 700003',
+    mapUrl: 'https://maps.google.com/?cid=7836219985060979818',
+    zone: 'north',
+    matchTerms: ['bagbazar', 'baghbazar', 'kumartuli', 'circular canal']
+  },
+  {
+    id: 'shovabazar-launch-ghat',
+    name: 'Shovabazar Launch Ghat Parking',
+    serves: 'Sovabazar, Kumartuli, Ahiritola, Beniatola & Pathuriaghata',
+    address: 'Strand Bank Rd, Shobhabazar, Kolkata 700005',
+    mapUrl: 'https://maps.google.com/?cid=17466234994549195532',
+    zone: 'north',
+    matchTerms: ['sovabazar', 'shobhabazar', 'ahiritola', 'beniatola', 'pathuriaghata', 'pathurighata', 'malapara', 'darjipara', 'jagat mukherjee']
+  },
+  {
+    id: 'girish-park-crossing',
+    name: 'Girish Park Crossing / C.R. Avenue Service Lanes',
+    serves: 'Vivekananda Rd, Darjipara, Rabindra Kanan & Chaltabagan',
+    address: 'Chittaranjan Ave, Azad Hind Bag, Kolkata 700006',
+    mapUrl: 'https://maps.google.com/?cid=3740601807016850862',
+    zone: 'central',
+    matchTerms: ['girish park', 'vivekananda rd', 'darjipara', 'rabindra kanan', 'chaltabagan', 'ghorbagan', 'shitala byam', 'beadon street', 'jorasanko', 'simla', 'tarun sporting']
+  },
+  {
+    id: 'college-square-entrance',
+    name: 'College Square Entrance Road Parking',
+    serves: 'Thanthania, Chaltabagan, Md Ali Park & Santosh Mitra Square',
+    address: 'College Square, Kolkata 700073',
+    mapUrl: 'https://maps.google.com/?cid=6215720937787205116',
+    zone: 'central',
+    matchTerms: ['college square', 'thanthania', 'md ali park', 'bowbazar']
+  },
+  {
+    id: 'school-of-tropical-medicine',
+    name: 'Car Parking, School Of Tropical Medicine',
+    serves: 'Central Ave, Md Ali Park & College Street',
+    address: 'Calcutta Medical College, College Square, Kolkata 700073',
+    mapUrl: 'https://maps.google.com/?cid=10188727487033456003',
+    zone: 'central',
+    matchTerms: ['central ave', 'college street', 'medical college', 'janbazar', 'taltala', 'kapalitola', 'subodh mullick']
+  },
+  {
+    id: 'sealdah-parking',
+    name: 'Sealdah Parking (Bike & Car)',
+    serves: 'Santosh Mitra Square & Md Ali Park',
+    address: 'Vidyapati Setu, Sealdah, Raja Bazar, Kolkata 700014',
+    mapUrl: 'https://maps.google.com/?cid=6736309927221309278',
+    zone: 'central',
+    matchTerms: ['santosh mitra square', 'lebutala', 'muchipara', 'sealdah railway athletic', 'raja bazar']
+  },
+  {
+    id: 'parkwiz-sealdah',
+    name: 'ParkWiz Sealdah Parking Lot',
+    serves: 'Santosh Mitra Square & Central Kolkata',
+    address: 'Vidyapati Setu, Sealdah, Raja Bazar, Kolkata 700014',
+    mapUrl: 'https://maps.google.com/?cid=522577602541710031',
+    zone: 'central',
+    matchTerms: ['sealdah', 'santosh mitra square', 'lebutala', 'central kolkata']
+  },
+  {
+    id: 'diamond-plaza-mall',
+    name: 'Diamond Plaza Mall Parking',
+    serves: 'Nagerbazar, Mall Palli, Dum Dum Park & Shyamnagar',
+    address: '68, Jessore Rd, Shyam Nagar, Satgachi, Kolkata 700055',
+    mapUrl: 'https://maps.google.com/?cid=3085944755546807458',
+    zone: 'north',
+    matchTerms: ['nagerbazar', 'nager bazar', 'mall palli', 'dum dum park', 'dumdum park', 'shyam nagar', 'shyamnagar', 'satgachi', 'jessore road', 'bangur avenue']
+  },
+  {
+    id: 'vip-road-haldiram-kaikhali',
+    name: 'VIP Road Haldiram / Kaikhali Service Flank',
+    serves: 'Kestopur, Prafulla Kanan, Baguiati & Aswininagar',
+    address: '160, VIP Rd, Dhalipara, Tegharia, Kaikhali, Kolkata 700052',
+    mapUrl: 'https://maps.google.com/?cid=9022347507500942852',
+    zone: 'north',
+    matchTerms: ['kestopur', 'prafulla kanan', 'prafullakanan', 'baguiati', 'baguihati', 'aswininagar', 'aswini nagar', 'kaikhali', 'tegharia', 'chinar park', 'bablatala', 'rajarhat', 'gopalpur', 'narayanpur']
+  },
+  {
+    id: 'dum-dum-station',
+    name: 'Dum Dum Station Parking Lot',
+    serves: 'Dum Dum Rd, Laha Colony, Dakshinpara & Sinthee',
+    address: 'Satpukur, Dum Dum, Kolkata 700030',
+    mapUrl: 'https://maps.google.com/?cid=11217637003999295077',
+    zone: 'north',
+    matchTerms: ['dum dum rd', 'dum dum station', 'laha colony', 'dakshinpara', 'sinthee', 'sinthi', 'satpukur', 'dumdum tarun', 'dumdripra', 'telipukur']
+  },
+  {
+    id: 'metrorail-car-parking-noapara',
+    name: 'Metrorail Car Parking (Noapara / Dum Dum)',
+    serves: 'Noapara, Netaji Colony Low Land & Sinthee',
+    address: 'Bediapara, North Dumdum, Kolkata 700065',
+    mapUrl: 'https://maps.google.com/?cid=1307211331691687943',
+    zone: 'north',
+    matchTerms: ['noapara', 'netaji colony', 'bediapara', 'forward colony', 'nowpara dadabhai']
+  },
+  {
+    id: 'baranagar-metro-station',
+    name: 'Baranagar Metro Station Parking (Dunlop)',
+    serves: 'Dunlop, Rabindranagar & Baranagar',
+    address: 'Dunlop, Bonhooghly, Baranagar, Kolkata 700056',
+    mapUrl: 'https://maps.google.com/?cid=564109146890987406',
+    zone: 'north',
+    matchTerms: ['dunlop', 'rabindranagar', 'rabindra nagar', 'baranagar', 'bonhooghly', 'manasbag', 'amrita nagar', 'belgharia', 'mahua club', 'bani mandir']
+  },
+  {
+    id: 'sodepur-railway-station',
+    name: 'Sodepur Railway Station / Flyover Parking',
+    serves: 'Sodepur, Sahid Colony, Bijoypur & Tarapukur',
+    address: 'Sodepur Flyover, West Arunachal, Sodepur, Kolkata 700110',
+    mapUrl: 'https://maps.google.com/?cid=9840790309872312459',
+    zone: 'north',
+    matchTerms: ['sodepur', 'sahid colony', 'bijoypur', 'tarapukur', 'agarpara', 'adarshanagar', 'nabodaya']
+  },
+  {
+    id: 'sourav-car-parking-sodepur',
+    name: 'Sourav Car Parking (Sodepur)',
+    serves: 'Sodepur West, Peerless Nagar & Panihati cluster',
+    address: 'Barua Para, Kalyan Nagar, Ashok Sen Nagar, Sodepur, Kolkata 700110',
+    mapUrl: 'https://maps.google.com/?cid=14378157635706369181',
+    zone: 'north',
+    matchTerms: ['sodepur west', 'peerless nagar', 'panihati', 'kalyan nagar', 'sodepur deep prangan', 'udayan sangha']
+  },
+  {
+    id: 'deshapriya-parking-lot',
+    name: 'Deshapriya Parking Lot',
+    serves: 'Deshapriya Park, Tridhara Sammilani & Maddox Square',
+    address: 'Ground, Tilak Rd, Manoharpukur, Kalighat, Kolkata 700029',
+    mapUrl: 'https://maps.google.com/?cid=5533824129754924408',
+    zone: 'south',
+    matchTerms: ['deshapriya park', 'tridhara sammilani', 'maddox square', 'manoharpukur', 'ballygunge cultural', 'hindustan park', 'hindustan club', 'samaj sebi', 'singhi park', 'ekdalia', 'badamtala', '66 pally', 'nepal bhattacharjee', 'chetla', 'kalighat', 'mudiali', 'shib mandir', 'vivekananda park athletic', 'bhowanipore 75 pally', 'paddapukur barwari', 'dhakuria', 'jodhpur park', 'selimpur', 'bosepukur', 'kasba', 'rajdanga', 'babubagan']
+  },
+  {
+    id: 'new-alipore-sahapur',
+    name: 'New Alipore Sahapur Parking Lot',
+    serves: 'Suruchi Sangha',
+    address: 'Sahapur, New Alipore, Kolkata 700038',
+    mapUrl: 'https://maps.google.com/?cid=14406938668201904003',
+    zone: 'south',
+    matchTerms: ['suruchi sangha', 'new alipore', 'sahapur', 'alipore sarbojanin', 'chetla agrani', 'bhukailash']
+  },
+  {
+    id: 'behala-chowrasta-metro',
+    name: 'Behala Chowrasta Metro Station Flank',
+    serves: 'Barisha Club',
+    address: 'Diamond Harbour Rd, Behala Chowrasta, Kolkata 700008',
+    mapUrl: 'https://maps.google.com/?cid=5606685553339919200',
+    zone: 'south',
+    matchTerms: ['barisha club', 'behala chowrasta', 'behala natun dal', 'behala club', 'behala 29 pally', 'behala players corner', 'barisha sarbojanin', 'sabarna roy choudhury', 'behala shibrampur', 'sakherbazar', 'behala bazar', 'sb park', 'haridevpur']
+  },
+  {
+    id: 'kavi-nazrul-metro',
+    name: 'Kavi Nazrul Metro Station Parking',
+    serves: 'Naktala Udayan Sangha',
+    address: '56, Nayabad Ave, Garia Bazaar, Garia, Kolkata 700084',
+    mapUrl: 'https://maps.google.com/?cid=5874541501149039132',
+    zone: 'south',
+    matchTerms: ['naktala udayan sangha', 'naktala', 'garia', 'kavi nazrul', 'garia nabadurga', 'layalka 9 pally', 'baghajatin', 'kudghat']
+  }
+];
+
+export function getParkingForPandal(p) {
+  const text = (p.name + ' ' + p.area + ' ' + p.station + ' ' + (p.theme || '')).toLowerCase();
+  const matched = [];
+  for (const lot of PARKING_LOTS) {
+    if (lot.matchTerms.some((t) => text.includes(t))) {
+      matched.push(lot);
+    }
+  }
+  if (matched.length === 0) {
+    const zoneLots = PARKING_LOTS.filter((l) => l.zone === p.zone);
+    if (zoneLots.length > 0) matched.push(zoneLots[0]);
+  }
+  return matched;
+}
+
 // Compact source rows: name | area | zone | nearest station | flags
 // flags: m = must visit, b = bonedi bari, t:<theme>, w:<walk minutes, only where a source gave one>
 const rows = `

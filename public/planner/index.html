@@ -63,6 +63,8 @@
 <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
 <symbol id="i-expand" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
 <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/></symbol>
+<symbol id="i-car" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 3c-.1.2-.1.4-.1.6v4.5c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></symbol>
+<symbol id="i-parking" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" stroke-width="2"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 <symbol id="i-lotus" viewBox="0 0 64 64"><path d="M32 8c5 8 6 16 0 27-6-11-5-19 0-27zM12 22c9 1 16 6 19 15-9 1-16-3-19-15zM52 22c-3 12-10 16-19 15 3-9 10-14 19-15zM6 38c10-2 18 1 24 8-10 4-19 1-24-8zM58 38c-5 9-14 12-24 8 6-7 14-10 24-8zM32 50c-8 0-15 3-20 8h40c-5-5-12-8-20-8z"/></symbol>
 </svg>
 <a class="sr-only" href="#main">Skip to content</a>
@@ -70,14 +72,13 @@
   <a class="brand" href="/" aria-label="PujoPath home"><svg class="lotus" aria-hidden="true"><use href="#i-lotus"/></svg><span>Pujo<b>Path</b></span></a>
   <nav class="top-links" aria-label="Primary"><a href="/">Home</a><a href="/pandals" aria-current="page">Explore</a><a href="/metro">Metro</a><a href="/support">Support</a></nav>
   <div class="head-actions">
-    <a class="head-btn head-check" href="/checklist" aria-label="Pandal Checklist" title="Visited Pandals Checklist"><svg class="icon" aria-hidden="true"><use href="#i-checklist"/></svg><span class="badge badge-check" data-check-count data-count="0">0</span></a>
-    <a class="head-btn head-wish" href="/wishlist" aria-label="Wishlist" title="Saved Wishlist"><svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg><span class="badge" data-wish-count data-count="0">0</span></a>
+    <a class="head-btn head-check" href="/checklist" aria-label="Pandal Checklist" title="My Pandal Checklist"><svg class="icon" aria-hidden="true"><use href="#i-checklist"/></svg><span class="badge badge-check" data-check-count data-count="0">0</span></a>
   </div>
 </div></header>
 <main id="main">
 <div class="wrap">
   <div class="page-title"><h1>Plan your pujo route</h1><p>Choose where you start and what you want to see. We order the stops by metro proximity.</p></div>
-  <nav class="subnav" aria-label="Explore sections"><a href="/pandals">Pandals</a><a href="/hopping">Hopping</a><a href="/planner" aria-current="page">Planner</a><a href="/wishlist">Wishlist<span class="badge" data-wish-count data-count="0">0</span></a><a href="/checklist">Checklist<span class="badge badge-check" data-check-count data-count="0">0</span></a></nav>
+  <nav class="subnav" aria-label="Explore sections"><a class="subnav-item subnav-pandals" href="/pandals">Pandals</a><a class="subnav-item subnav-hopping" href="/hopping">Hopping</a><a class="subnav-item subnav-planner" href="/planner" aria-current="page">Planner</a><a class="subnav-item subnav-checklist" href="/checklist">Checklist<span class="badge badge-check" data-check-count data-count="0">0</span></a></nav>
   <form class="panel-card" data-plan-form onsubmit="return false">
     <div class="seg" role="group" aria-label="Build route by"><button type="button" aria-pressed="true" data-mode="zone">By zone</button><button type="button" aria-pressed="false" data-mode="line">By metro</button><button type="button" aria-pressed="false" data-mode="custom">Custom</button></div>
     <div class="two">
@@ -107,7 +108,7 @@
       <option value="Dakshineswar">Dakshineswar (Blue Line)</option><option value="Baranagar">Baranagar (Blue Line)</option><option value="Noapara">Noapara (Blue Line)</option><option value="Dum Dum">Dum Dum (Blue Line)</option><option value="Belgachia">Belgachia (Blue Line)</option><option value="Shyambazar">Shyambazar (Blue Line)</option><option value="Shobhabazar Sutanuti">Shobhabazar Sutanuti (Blue Line)</option><option value="Girish Park">Girish Park (Blue Line)</option><option value="Mahatma Gandhi Road">Mahatma Gandhi Road (Blue Line)</option><option value="Central">Central (Blue Line)</option><option value="Chandni Chowk">Chandni Chowk (Blue Line)</option><option value="Esplanade">Esplanade (Blue Line)</option><option value="Park Street">Park Street (Blue Line)</option><option value="Maidan">Maidan (Blue Line)</option><option value="Rabindra Sadan">Rabindra Sadan (Blue Line)</option><option value="Netaji Bhavan">Netaji Bhavan (Blue Line)</option><option value="Jatin Das Park">Jatin Das Park (Blue Line)</option><option value="Kalighat">Kalighat (Blue Line)</option><option value="Rabindra Sarobar">Rabindra Sarobar (Blue Line)</option><option value="Mahanayak Uttam Kumar">Mahanayak Uttam Kumar (Blue Line)</option><option value="Netaji">Netaji (Blue Line)</option><option value="Masterda Surya Sen">Masterda Surya Sen (Blue Line)</option><option value="Gitanjali">Gitanjali (Blue Line)</option><option value="Kavi Nazrul">Kavi Nazrul (Blue Line)</option><option value="Shahid Khudiram">Shahid Khudiram (Blue Line)</option><option value="Kavi Subhash">Kavi Subhash (Blue Line)</option><option value="Howrah Maidan">Howrah Maidan (Green Line)</option><option value="Howrah">Howrah (Green Line)</option><option value="Mahakaran">Mahakaran (Green Line)</option><option value="Sealdah">Sealdah (Green Line)</option><option value="Phoolbagan">Phoolbagan (Green Line)</option><option value="Salt Lake Stadium">Salt Lake Stadium (Green Line)</option><option value="Bengal Chemical">Bengal Chemical (Green Line)</option><option value="City Centre">City Centre (Green Line)</option><option value="Central Park">Central Park (Green Line)</option><option value="Karunamoyee">Karunamoyee (Green Line)</option><option value="Salt Lake Sector V">Salt Lake Sector V (Green Line)</option><option value="Dum Dum Cantonment">Dum Dum Cantonment (Yellow Line)</option><option value="Jessore Road">Jessore Road (Yellow Line)</option><option value="Jai Hind (Airport)">Jai Hind (Airport) (Yellow Line)</option><option value="Majerhat">Majerhat (Purple Line)</option><option value="Taratala">Taratala (Purple Line)</option><option value="Behala Bazar">Behala Bazar (Purple Line)</option><option value="Behala Chowrasta">Behala Chowrasta (Purple Line)</option><option value="Sakherbazar">Sakherbazar (Purple Line)</option><option value="Thakurpukur">Thakurpukur (Purple Line)</option><option value="Joka">Joka (Purple Line)</option><option value="Beliaghata">Beliaghata (Orange Line)</option><option value="Barun Sengupta">Barun Sengupta (Orange Line)</option><option value="Ritwik Ghatak">Ritwik Ghatak (Orange Line)</option><option value="VIP Bazaar">VIP Bazaar (Orange Line)</option><option value="Hemanta Mukhopadhyay">Hemanta Mukhopadhyay (Orange Line)</option><option value="Kavi Sukanta">Kavi Sukanta (Orange Line)</option><option value="Jyotirindra Nandi">Jyotirindra Nandi (Orange Line)</option><option value="Satyajit Ray">Satyajit Ray (Orange Line)</option>
     </datalist>
     <div data-opt="custom" hidden class="field"><label for="p-search">Choose pandals</label><input class="input" id="p-search" type="search" placeholder="Search to add pandals" autocomplete="off"><div class="picker-results" data-picker></div><p class="count-note" data-picked-note></p>
-      <button type="button" class="btn btn-ghost btn-sm" data-use-wish><svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg> Use my wishlist</button></div>
+      <button type="button" class="btn btn-ghost btn-sm" data-use-checklist><svg class="icon" aria-hidden="true"><use href="#i-checklist"/></svg> Use my checklist</button></div>
     <div class="two" data-opt-limit>
       <div class="field"><label for="p-max">Number of stops</label><select class="select" id="p-max"><option>5</option><option selected>8</option><option>10</option><option>15</option><option>20</option></select></div>
       <div class="field"><label for="p-must">Priority</label><select class="select" id="p-must"><option value="1">Must-visits first</option><option value="0">Closest first</option></select></div>
@@ -134,7 +135,9 @@
       <a href="/pandals">Pandals</a>
       <a href="/hopping">Zones</a>
       <a href="/planner">Planner</a>
+      <a href="/checklist">Checklist</a>
       <a href="/metro">Metro</a>
+      <a href="/parking">Parking</a>
       <a href="/map">Map</a>
       <a href="/support">Support</a>
       <a href="/privacy">Privacy</a>

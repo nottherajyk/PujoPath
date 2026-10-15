@@ -2,7 +2,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { SITE, LINES, ZONES, PANDALS } from './data.mjs';
+import { SITE, LINES, ZONES, PANDALS, PARKING_LOTS, getParkingForPandal } from './data.mjs';
 import { esc, enc, icon, makeCtx, cardHTML, placeLink, stationToPandalLink, formatWalkTime } from './src/js/shared.js';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
@@ -28,7 +28,7 @@ for (const f of fs.existsSync(pdir) ? fs.readdirSync(pdir) : []) {
 }
 
 fs.copyFileSync(path.join(SRC, 'assets', 'og-image.jpg'), path.join(OUT, 'og-image.jpg'));
-const data = { site: { name: SITE.name, year: SITE.year }, lines: LINES, zones: ZONES, pandals: PANDALS, photos };
+const data = { site: { name: SITE.name, year: SITE.year }, lines: LINES, zones: ZONES, pandals: PANDALS, photos, parking: PARKING_LOTS };
 fs.writeFileSync(path.join(OUT, 'data.json'), JSON.stringify(data));
 const ctx = makeCtx(data);
 
@@ -63,6 +63,8 @@ const sprite = `<svg xmlns="http://www.w3.org/2000/svg" style="display:none" ari
 <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
 <symbol id="i-expand" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
 <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/></symbol>
+<symbol id="i-car" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 3c-.1.2-.1.4-.1.6v4.5c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></symbol>
+<symbol id="i-parking" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" stroke-width="2"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 <symbol id="i-lotus" viewBox="0 0 64 64"><path d="M32 8c5 8 6 16 0 27-6-11-5-19 0-27zM12 22c9 1 16 6 19 15-9 1-16-3-19-15zM52 22c-3 12-10 16-19 15 3-9 10-14 19-15zM6 38c10-2 18 1 24 8-10 4-19 1-24-8zM58 38c-5 9-14 12-24 8 6-7 14-10 24-8zM32 50c-8 0-15 3-20 8h40c-5-5-12-8-20-8z"/></symbol>
 </svg>`;
 
@@ -76,7 +78,6 @@ const SUB = [
   { key: 'pandals', href: '/pandals', label: 'Pandals' },
   { key: 'hopping', href: '/hopping', label: 'Hopping' },
   { key: 'planner', href: '/planner', label: 'Planner' },
-  { key: 'wishlist', href: '/wishlist', label: 'Wishlist' },
   { key: 'checklist', href: '/checklist', label: 'Checklist' },
 ];
 
@@ -85,7 +86,6 @@ const KEYWORDS = ['PujoPath', 'PujaPath', 'Kolkata Durga Puja 2026', 'Durga Puja
 function layout({ title, desc, pathname, navKey, subKey, body, jsonld = [], page, ogImage = '/og-image.jpg', noindex = false, keywords = KEYWORDS, bodyClass = '', ogType = 'website' }) {
   const url = SITE.url + pathname;
   const ld = jsonld.map((o) => `<script type="application/ld+json">${JSON.stringify(o)}</script>`).join('\n');
-  const wishCount = `<span class="badge" data-wish-count data-count="0">0</span>`;
   return `<!doctype html>
 <html lang="en-IN">
 <head>
@@ -133,8 +133,7 @@ ${sprite}
   <a class="brand" href="/" aria-label="${SITE.name} home">${icon('lotus', 'lotus')}<span>Pujo<b>Path</b></span></a>
   <nav class="top-links" aria-label="Primary">${NAV.map((n) => `<a href="${n.href}"${n.key === navKey ? ' aria-current="page"' : ''}>${n.label}</a>`).join('')}</nav>
   <div class="head-actions">
-    <a class="head-btn head-check" href="/checklist" aria-label="Pandal Checklist" title="Visited Pandals Checklist">${icon('checklist')}<span class="badge badge-check" data-check-count data-count="0">0</span></a>
-    <a class="head-btn head-wish" href="/wishlist" aria-label="Wishlist" title="Saved Wishlist">${icon('heart')}${wishCount}</a>
+    <a class="head-btn head-check" href="/checklist" aria-label="Pandal Checklist" title="My Pandal Checklist">${icon('checklist')}<span class="badge badge-check" data-check-count data-count="0">0</span></a>
   </div>
 </div></header>
 <main id="main">
@@ -150,7 +149,9 @@ ${body}
       <a href="/pandals">Pandals</a>
       <a href="/hopping">Zones</a>
       <a href="/planner">Planner</a>
+      <a href="/checklist">Checklist</a>
       <a href="/metro">Metro</a>
+      <a href="/parking">Parking</a>
       <a href="/map">Map</a>
       <a href="/support">Support</a>
       <a href="/privacy">Privacy</a>
@@ -168,11 +169,12 @@ ${body}
 </html>`;
 }
 
-const subnav = (active) => `<nav class="subnav" aria-label="Explore sections">${SUB.map((s) => `<a href="${s.href}"${s.key === active ? ' aria-current="page"' : ''}>${s.label}${s.key === 'wishlist' ? `<span class="badge" data-wish-count data-count="0">0</span>` : ''}${s.key === 'checklist' ? `<span class="badge badge-check" data-check-count data-count="0">0</span>` : ''}</a>`).join('')}</nav>`;
+const subnav = (active) => `<nav class="subnav" aria-label="Explore sections">${SUB.map((s) => `<a class="subnav-item subnav-${s.key}" href="${s.href}"${s.key === active ? ' aria-current="page"' : ''}>${s.label}${s.key === 'checklist' ? `<span class="badge badge-check" data-check-count data-count="0">0</span>` : ''}</a>`).join('')}</nav>`;
 
 const total = PANDALS.length;
 const musts = PANDALS.filter((p) => p.must);
 const ICONIC_IDS = [
+  'tridhara-sammilani',
   'sree-bhumi-sporting-club',
   'santosh-mitra-square-lebutala',
   'bagbazar-sarbojanin-durgotsav',
@@ -180,7 +182,6 @@ const ICONIC_IDS = [
   'college-square',
   'suruchi-sangha',
   'chetla-agrani-club',
-  'tridhara-sammilani',
   'ballygunge-cultural-association',
   'mudiali-club',
 ];
@@ -213,7 +214,7 @@ write('index.html', layout({
   <img class="hero-img" src="/assets/hero-night.webp" alt="Illuminated Durga Puja pandal at night with a golden idol and red banners, crowds filming" width="1672" height="941" fetchpriority="high">
   <div class="wrap">
     <div class="hero-content">
-      <h1>Less “Where Next?” <em>More “WOW.”</em></h1>
+      <h1>Less<br class="hide-desktop"> “Where Next?” <em>More “WOW.”</em></h1>
       <p class="lead">Your next pandal, your smartest route, your best Pujo yet.</p>
       <form class="search" action="/pandals" method="get" role="search">
         ${icon('search', 'icon icon-l')}
@@ -229,8 +230,13 @@ write('index.html', layout({
       </div>
     </div>
   </div>
+  <div class="hero-bottom-cue">
+    <a class="scroll-down-btn" href="#spotlight" aria-label="Scroll down to explore pandals, zones, and itineraries" title="Scroll down">
+      <span class="scroll-cue-icon" aria-hidden="true">${icon('chev')}</span>
+    </a>
+  </div>
 </section>
-<div class="home-sheet">
+<div class="home-sheet" id="spotlight">
   <div class="wrap">
     <section class="section" aria-labelledby="iconic">
       <div class="section-head">
@@ -280,7 +286,7 @@ write('pandals/index.html', layout({
   pathname: '/pandals', navKey: 'explore', page: 'pandals',
   jsonld: [crumbs([['Home', '/'], ['Pandals', '/pandals']]), { '@context': 'https://schema.org', '@type': 'ItemList', name: `Kolkata Durga Puja ${SITE.year} pandals`, itemListElement: PANDALS.slice(0, 10).map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: `${SITE.url}/pandal/${p.id}`, name: p.name })) }],
   body: `<div class="wrap">
-  <div class="page-title"><h1>Kolkata Pandals ${SITE.year}</h1><p>${total} pandals with their nearest metro station. Tap the heart to save a pandal.</p></div>
+  <div class="page-title"><h1>Kolkata Pandals ${SITE.year}</h1><p>${total} pandals with their nearest metro station. Tap the checklist icon to plan & track your visits.</p></div>
   ${subnav('pandals')}
   <div class="filters" data-filters>
     <div class="search-lite">${icon('search')}<label class="sr-only" for="q">Search pandals</label><input class="input" id="q" type="search" placeholder="Search pandals, areas, stations" autocomplete="off"></div>
@@ -358,7 +364,7 @@ write('planner/index.html', layout({
       ${stationDatalist}
     </datalist>
     <div data-opt="custom" hidden class="field"><label for="p-search">Choose pandals</label><input class="input" id="p-search" type="search" placeholder="Search to add pandals" autocomplete="off"><div class="picker-results" data-picker></div><p class="count-note" data-picked-note></p>
-      <button type="button" class="btn btn-ghost btn-sm" data-use-wish>${icon('heart')} Use my wishlist</button></div>
+      <button type="button" class="btn btn-ghost btn-sm" data-use-checklist>${icon('checklist')} Use my checklist</button></div>
     <div class="two" data-opt-limit>
       <div class="field"><label for="p-max">Number of stops</label><select class="select" id="p-max"><option>5</option><option selected>8</option><option>10</option><option>15</option><option>20</option></select></div>
       <div class="field"><label for="p-must">Priority</label><select class="select" id="p-must"><option value="1">Must-visits first</option><option value="0">Closest first</option></select></div>
@@ -376,20 +382,18 @@ write('planner/index.html', layout({
 <div class="sticky-cta" data-cta><div class="wrap"><a class="btn btn-primary btn-block" data-open-maps target="_blank" rel="noopener">${icon('map')} Open route in Google Maps</a></div></div>`,
 }));
 
-// ================= WISHLIST =================
-write('wishlist/index.html', layout({
-  title: `My Wishlist: Saved Durga Puja Pandals | ${SITE.name}`,
-  desc: 'Your saved Kolkata Durga Puja pandals. Turn your wishlist into a metro-friendly pandal hopping route.',
-  pathname: '/wishlist', navKey: 'explore', page: 'wishlist', noindex: true,
-  body: `<div class="wrap">
-  <div class="page-title"><h1>My wishlist</h1><p>Saved on this device only.</p></div>
-  ${subnav('wishlist')}
-  <div class="btn-row" data-wish-actions hidden style="margin-bottom:14px"><a class="btn btn-primary" href="/planner?wish=1">${icon('route')} Plan a route</a><button class="btn btn-ghost" type="button" data-clear>Clear all</button></div>
-  <div class="list" data-list></div>
-  <div class="empty" data-empty hidden><h3>No saved pandals yet</h3><p>Tap the heart on any pandal to save it here.</p><a class="btn btn-primary" href="/pandals">Explore pandals</a></div>
-  <div class="more-wrap"><button class="btn btn-ghost" type="button" data-more hidden>View more</button></div>
-</div>`,
-}));
+// ================= WISHLIST (REDIRECT TO CHECKLIST) =================
+write('wishlist/index.html', `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="refresh" content="0; url=/checklist">
+<link rel="canonical" href="${SITE.url}/checklist">
+<title>Redirecting to Checklist | ${SITE.name}</title>
+<script>location.replace('/checklist');</script>
+</head>
+<body><p>Redirecting to <a href="/checklist">Pandal Checklist</a>...</p></body>
+</html>`);
 
 // ================= CHECKLIST (VISITED TRACKER) =================
 write('checklist/index.html', layout({
@@ -428,7 +432,7 @@ write('checklist/index.html', layout({
 
   <div class="check-actions-bar" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-top:16px">
     <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button type="button" class="btn btn-primary btn-sm" data-toggle-add-panel>${icon('plus')} Add Pandals</button>
+      <button type="button" class="btn btn-primary btn-sm" data-toggle-add-panel aria-expanded="false">${icon('plus')} Add Pandals</button>
       <a href="/planner" class="btn btn-ghost btn-sm" data-plan-checklist>${icon('route')} Plan route for checklist</a>
     </div>
     <button type="button" class="btn btn-ghost btn-sm" data-clear-check title="Reset checklist">${icon('trash')} Clear</button>
@@ -438,7 +442,7 @@ write('checklist/index.html', layout({
     <div class="panel-card" style="margin-top:14px;padding:16px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <h3 style="font-size:16px;margin:0">Add Pandals to Your Checklist</h3>
-        <button type="button" class="btn btn-ghost btn-sm" data-close-add-panel>Done</button>
+        <button type="button" class="btn btn-primary btn-sm" data-close-add-panel>${icon('check')} Done Adding</button>
       </div>
       <div class="search" style="margin:0 0 10px">
         <span class="icon-l">${icon('search')}</span>
@@ -449,9 +453,13 @@ write('checklist/index.html', layout({
         <button type="button" class="chip" data-quick-add="north">+ North Heritage</button>
         <button type="button" class="chip" data-quick-add="south">+ South Highlights</button>
         <button type="button" class="chip" data-quick-add="central">+ Central Heritage</button>
-        <button type="button" class="chip" data-quick-add="wish" data-add-wish-btn hidden>❤️ + From Wishlist</button>
+        <button type="button" class="chip" data-quick-add="east">+ East & Salt Lake</button>
+        <button type="button" class="chip" data-quick-add="bonedi">+ Bonedi Bari</button>
       </div>
       <div class="add-picker-results" data-add-picker-results style="max-height:280px;overflow-y:auto;display:grid;gap:8px"></div>
+      <div class="add-panel-footer" style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">
+        <button type="button" class="btn btn-primary btn-block" data-close-add-panel-bottom>${icon('check')} Done Adding Pandals</button>
+      </div>
     </div>
   </div>
 
@@ -555,6 +563,61 @@ write('map/index.html', layout({
 </div>`,
 }));
 
+// ================= PARKING =================
+write('parking/index.html', layout({
+  title: `Kolkata Durga Puja ${SITE.year} Parking Lots: Car & Bike Parking Near Pandals | ${SITE.name}`,
+  desc: `Find verified car and two-wheeler parking spaces within 2km radius of Kolkata Durga Puja pandals. Direct Google Maps navigation links for 25 shortlisted parking spots across North, South, Central & East Kolkata.`,
+  pathname: '/parking', navKey: 'explore', page: 'parking',
+  jsonld: [crumbs([['Home', '/'], ['Parking', '/parking']])],
+  body: `<div class="wrap">
+  <div class="page-title">
+    <h1>Durga Puja Parking Guide ${SITE.year}</h1>
+    <p>Shortlisted parking spaces under 2 km radius for visitors travelling via cars and two-wheelers. Tap "Open Location" for direct Google Maps navigation.</p>
+  </div>
+  <div class="filters" style="margin-top:14px">
+    <div class="search-lite">${icon('search')}<label class="sr-only" for="pq">Search parking</label><input class="input" id="pq" type="search" placeholder="Search by parking lot, area or pandal…" autocomplete="off" data-parking-search></div>
+    <div class="chips" role="group" aria-label="Filter parking by zone" style="margin-top:10px" data-parking-chips>
+      <button class="chip" type="button" aria-pressed="true" data-zone="">All (${PARKING_LOTS.length})</button>
+      <button class="chip" type="button" aria-pressed="false" data-zone="north">North (${PARKING_LOTS.filter((l) => l.zone === 'north').length})</button>
+      <button class="chip" type="button" aria-pressed="false" data-zone="south">South (${PARKING_LOTS.filter((l) => l.zone === 'south').length})</button>
+      <button class="chip" type="button" aria-pressed="false" data-zone="central">Central (${PARKING_LOTS.filter((l) => l.zone === 'central').length})</button>
+      <button class="chip" type="button" aria-pressed="false" data-zone="east">East &amp; Salt Lake (${PARKING_LOTS.filter((l) => l.zone === 'east').length})</button>
+    </div>
+  </div>
+  <div class="parking-grid" data-parking-grid>
+    ${PARKING_LOTS.map((lot) => `
+      <article class="parking-dir-card" data-zone="${lot.zone}" data-name="${esc(lot.name.toLowerCase())}" data-serves="${esc(lot.serves.toLowerCase())}" data-address="${esc(lot.address.toLowerCase())}">
+        <div>
+          <div class="parking-card-head" style="border-bottom:none;margin-bottom:8px;padding-bottom:0">
+            <span class="parking-dir-badge">${lot.zone.toUpperCase()} KOLKATA</span>
+            <span class="parking-radius-tag">&lt; 2 km radius</span>
+          </div>
+          <div class="parking-item-main" style="margin-top:6px">
+            <div class="parking-lot-icon" aria-hidden="true">${icon('parking')}</div>
+            <div class="parking-info">
+              <h2 class="parking-lot-name" style="font-size:16px">${esc(lot.name)}</h2>
+              <p class="parking-address">${esc(lot.address)}</p>
+            </div>
+          </div>
+          <div class="parking-serves" style="margin-top:12px;background:rgba(250,248,245,0.7);padding:8px 10px;border-radius:8px;border:1px solid rgba(230,217,198,0.5)">
+            <b>Pandals &amp; Areas Served:</b>
+            <p style="margin:2px 0 0;color:var(--navy);font-size:12.5px">${esc(lot.serves)}</p>
+          </div>
+        </div>
+        <div style="margin-top:14px">
+          <a class="btn btn-parking btn-block" href="${esc(lot.mapUrl)}" target="_blank" rel="noopener">
+            ${icon('pin')} Open Location in Maps
+          </a>
+        </div>
+      </article>
+    `).join('')}
+  </div>
+  <div class="notice" style="margin:28px 0 20px">
+    <b>Kolkata Police Traffic Advisory:</b> During peak festive hours (Panchami through Dashami, 4:00 PM to 4:00 AM), arterial roads like VIP Road, Rashbehari Avenue, and Central Avenue may implement one-way traffic regulations. Park only in authorized or designated lots and note down your parking spot location before walking to pandals.
+  </div>
+</div>`,
+}));
+
 // ================= SUPPORT =================
 write('support/index.html', layout({
   title: `Support & Contact | ${SITE.name}`,
@@ -570,11 +633,11 @@ write('support/index.html', layout({
     <div class="local-data-head">
       <div>
         <h3>Your Device Storage</h3>
-        <p class="muted" style="font-size:14px;margin-top:4px">PujoPath automatically saves your wishlist, custom itineraries and filter settings locally in your browser. All data stays private on your phone or computer.</p>
+        <p class="muted" style="font-size:14px;margin-top:4px">PujoPath automatically saves your checklist, custom itineraries and filter settings locally in your browser. All data stays private on your phone or computer.</p>
       </div>
     </div>
     <div class="local-stats">
-      <div class="local-stat"><b>Wishlist</b><span data-stat-wish>Loading…</span></div>
+      <div class="local-stat"><b>Checklist</b><span data-stat-check>Loading…</span></div>
       <div class="local-stat"><b>Route Planner</b><span data-stat-plan>Loading…</span></div>
       <div class="local-stat"><b>Recently Viewed</b><span data-stat-recent>Loading…</span></div>
     </div>
@@ -605,7 +668,7 @@ for (const p of PANDALS) {
     body: `<div class="detail-hero">
   ${photo ? `<img src="${esc(photo)}" alt="${esc(p.name)} Durga Puja pandal" decoding="async" width="1200" height="630">` : `<div class="ph" aria-hidden="true">${icon('lotus', '')}</div>`}
   <a class="back" href="/pandals" aria-label="Back to pandals">${icon('back')}</a>
-  <button class="heart" type="button" aria-pressed="false" aria-label="Save ${esc(p.name)} to wishlist" data-heart="${p.id}">${icon('heart', '')}</button>
+  <button class="card-check-toggle" type="button" aria-pressed="false" aria-label="Add ${esc(p.name)} to checklist" title="Add to checklist" data-checklist-toggle="${p.id}">${icon('checklist')}</button>
 </div>
 <div class="detail-body"><div class="wrap">
   <p class="crumbs"><a href="/">Home</a> / <a href="/pandals">Pandals</a> / ${esc(p.name)}</p>
@@ -614,6 +677,7 @@ for (const p of PANDALS) {
   <p class="muted" style="margin-top:6px">${esc(p.area)}, Kolkata</p>
   <div style="margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
     <button class="btn btn-sm btn-check-action" type="button" data-check-toggle="${p.id}" aria-pressed="false">${icon('check')}<span class="check-label">Mark as Visited</span></button>
+    <button class="btn btn-sm btn-add-checklist" type="button" data-checklist-toggle="${p.id}" aria-pressed="false">${icon('checklist')}<span class="checklist-btn-label">Add to Checklist</span></button>
   </div>
   ${p.theme ? `<div class="panel-card" style="margin-top:16px"><div><span class="label">${SITE.year} theme</span><p style="font-family:var(--font-head);font-size:20px;margin-top:4px">${esc(p.theme)}</p></div></div>` : ''}
   <div class="info">
@@ -621,7 +685,43 @@ for (const p of PANDALS) {
     <div class="row">${icon('walk')}<div><b>${p.walkMin ? `About ${formatWalkTime(p.walkMin)}` : 'Walking time varies'}</b><span>${p.walkMin ? (p.walkMin > 25 ? 'Estimate from the station · Auto/transit recommended' : 'Estimate from the station') : 'Open directions for the live walking time'}</span></div></div>
   </div>
   <div class="btn-row"><a class="btn btn-primary" href="${stationToPandalLink(p)}" target="_blank" rel="noopener">${icon('route')} Directions</a><a class="btn btn-ghost" href="${placeLink(p)}" target="_blank" rel="noopener">${icon('pin')} View on Maps</a></div>
-  <a class="btn btn-ghost btn-block" style="margin-top:12px" href="/planner?add=${p.id}">${icon('plus')} Add to my route</a>
+  <button class="btn btn-ghost btn-block btn-detail-check-toggle" type="button" data-checklist-toggle="${p.id}" aria-pressed="false" style="margin-top:10px">${icon('checklist')}<span class="checklist-btn-label">Add to my checklist</span></button>
+  <a class="btn btn-ghost btn-block" style="margin-top:10px" href="/planner?add=${p.id}">${icon('plus')} Add to my route</a>
+
+  <section class="parking-section" aria-labelledby="parking-head-${p.id}">
+    <div class="parking-panel">
+      <div class="parking-card-head">
+        <div class="parking-title-group">
+          <span class="parking-badge-icon" aria-hidden="true">${icon('car')}</span>
+          <div>
+            <h2 id="parking-head-${p.id}" class="parking-title">Nearby Parking (Cars &amp; Bikes)</h2>
+            <span class="parking-subtitle">Shortlisted spots under 2 km radius for road travelers</span>
+          </div>
+        </div>
+        <span class="parking-radius-tag">&lt; 2 km radius</span>
+      </div>
+      <div class="parking-items">
+        ${getParkingForPandal(p).map((lot) => `
+          <div class="parking-item">
+            <div class="parking-item-main">
+              <div class="parking-lot-icon" aria-hidden="true">${icon('parking')}</div>
+              <div class="parking-info">
+                <b class="parking-lot-name">${esc(lot.name)}</b>
+                <p class="parking-address">${esc(lot.address)}</p>
+                <span class="parking-serves"><b>Serves:</b> ${esc(lot.serves)}</span>
+              </div>
+            </div>
+            <a class="btn btn-parking" href="${esc(lot.mapUrl)}" target="_blank" rel="noopener">
+              ${icon('pin')} Open Location
+            </a>
+          </div>
+        `).join('')}
+      </div>
+      <div class="parking-footer-links">
+        <a class="parking-dir-link" href="/parking">${icon('car')} View all 25 Kolkata Pujo parking lots →</a>
+      </div>
+    </div>
+  </section>
   ${same.length ? `<section class="section"><div class="section-head"><h2 style="font-size:22px">Also near ${esc(p.station)}</h2></div><div class="list">${same.map((x) => cardHTML(x, ctx)).join('')}</div></section>` : ''}
 </div></div>`,
   }));
@@ -637,7 +737,7 @@ write('privacy/index.html', layout({
   <div class="legal-content">
     <section>
       <h2>1. Local Device Storage</h2>
-      <p>PujoPath operates on a local-first architecture. Your saved wishlist pandals, custom route planner itineraries, and filter preferences are saved exclusively in your browser's local storage (localStorage). This data remains entirely on your personal device and is never uploaded, tracked, or sold to third parties.</p>
+      <p>PujoPath operates on a local-first architecture. Your saved pandal checklist, custom route planner itineraries, and filter preferences are saved exclusively in your browser's local storage (localStorage). This data remains entirely on your personal device and is never uploaded, tracked, or sold to third parties.</p>
     </section>
     <section>
       <h2>2. No Account or Tracking Required</h2>
@@ -700,7 +800,7 @@ write('404.html', layout({
 const today = new Date().toISOString().slice(0, 10);
 const urls = [['/', 1.0], ['/pandals', 0.9], ['/hopping', 0.8], ['/planner', 0.8], ['/metro', 0.8], ['/map', 0.6], ['/support', 0.3], ['/privacy', 0.3], ['/terms', 0.3], ...PANDALS.map((p) => [`/pandal/${p.id}`, p.must ? 0.7 : 0.5])];
 write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map(([u, pr]) => `  <url><loc>${SITE.url}${u}</loc><lastmod>${today}</lastmod><priority>${pr}</priority></url>`).join('\n')}\n</urlset>\n`);
-write('robots.txt', `User-agent: *\nAllow: /\nDisallow: /wishlist\nDisallow: /checklist\n\nSitemap: ${SITE.url}/sitemap.xml\n`);
+write('robots.txt', `User-agent: *\nAllow: /\nDisallow: /checklist\n\nSitemap: ${SITE.url}/sitemap.xml\n`);
 write('favicon.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#B22222"/><g fill="#D4A017" transform="translate(8 6) scale(.75)"><path d="M32 8c5 8 6 16 0 27-6-11-5-19 0-27zM12 22c9 1 16 6 19 15-9 1-16-3-19-15zM52 22c-3 12-10 16-19 15 3-9 10-14 19-15zM6 38c10-2 18 1 24 8-10 4-19 1-24-8zM58 38c-5 9-14 12-24 8 6-7 14-10 24-8zM32 50c-8 0-15 3-20 8h40c-5-5-12-8-20-8z"/></g></svg>`);
 fs.writeFileSync(path.join(ROOT, 'vercel.json'), JSON.stringify({
   buildCommand: 'node build.mjs', outputDirectory: 'public', cleanUrls: true, trailingSlash: false,
