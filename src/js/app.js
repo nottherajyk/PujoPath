@@ -510,7 +510,7 @@ function init() {
       try {
         const loc = await getCurrentLocation();
         el.start.value = loc.label;
-        toast(`📍 Location detected: ${loc.label}`);
+        toast(`Location detected: ${loc.label}`);
         saveDraft();
         updateEnroutePreview();
       } catch (err) {
@@ -1230,7 +1230,7 @@ function init() {
           emptyTitle.textContent = 'No pandals marked as visited yet';
           emptyMsg.textContent = 'Switch to "Left to Visit" and tap "Mark Visited" as you explore each pandal!';
         } else if (currentTab === 'left') {
-          emptyTitle.textContent = '🎉 Congratulations! Checklist Completed!';
+          emptyTitle.textContent = 'Congratulations! Checklist Completed!';
           emptyMsg.textContent = 'You have visited every single pandal on your personal checklist!';
         } else {
           emptyTitle.textContent = 'No matching pandals in your checklist';
@@ -1785,7 +1785,7 @@ function initGuide() {
     }
     if (btnNext) {
       if (currentStep === slides.length - 1) {
-        btnNext.textContent = 'Start Hopping 🎉';
+        btnNext.textContent = 'Start Hopping →';
         btnNext.classList.add('guide-finish-btn');
       } else {
         btnNext.textContent = 'Next →';

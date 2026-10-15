@@ -1976,7 +1976,17 @@ main { min-height: 60vh; }
   margin-bottom: 8px;
 }
 .enroute-header .enroute-icon {
-  font-size: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+.enroute-header .enroute-icon .icon {
+  width: 20px;
+  height: 20px;
 }
 .enroute-info {
   flex: 1;
@@ -3050,10 +3060,36 @@ body.modal-open {
   line-height: 1.45;
 }
 
-.guide-point-emoji {
-  font-size: 18px;
-  line-height: 1.2;
+.guide-point-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: rgba(178, 34, 34, 0.08);
+  border: 1px solid rgba(178, 34, 34, 0.16);
+  color: var(--sindoor);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+}
+.guide-point-icon .icon {
+  width: 17px;
+  height: 17px;
+}
+.guide-slide[data-guide-slide="1"] .guide-point-icon {
+  background: rgba(212, 160, 23, 0.1);
+  border-color: rgba(212, 160, 23, 0.25);
+  color: #B8860B;
+}
+.guide-slide[data-guide-slide="2"] .guide-point-icon {
+  background: rgba(30, 136, 229, 0.1);
+  border-color: rgba(30, 136, 229, 0.25);
+  color: #1E88E5;
+}
+.guide-slide[data-guide-slide="3"] .guide-point-icon {
+  background: rgba(46, 125, 50, 0.1);
+  border-color: rgba(46, 125, 50, 0.25);
+  color: #2E7D32;
 }
 
 .guide-point strong {
