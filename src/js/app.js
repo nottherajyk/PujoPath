@@ -325,7 +325,7 @@ function init() {
     const cta = $('[data-cta]'), openMaps = $('[data-open-maps]');
     const saved = store.get('pp_plan', {});
     const today = new Date(); today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
-    let mode = saved.mode || 'zone'; let picked = new Set(saved.picked || []); let route = []; let shown = PAGE;
+    let mode = saved.mode || 'zone'; let picked = new Set(saved.picked || []); let route = []; let shown = PAGE; let currentOnRoute = [];
 
     function isKnownStation(val) {
       if (!val) return false;
@@ -561,11 +561,21 @@ function init() {
     function updateEnroutePreview() {
       const enrouteBox = $('[data-enroute-box]');
       if (!enrouteBox) return;
+
+      if (mode !== 'custom') {
+        enrouteBox.hidden = true;
+        currentOnRoute = [];
+        drawPicker();
+        return;
+      }
+
       const startVal = el.start.value.trim();
       const endVal = el.end ? el.end.value.trim() : '';
 
       if (!startVal) {
         enrouteBox.hidden = true;
+        currentOnRoute = [];
+        drawPicker();
         return;
       }
 
@@ -573,6 +583,8 @@ function init() {
       const endRes = endVal ? resolvePlaceCoords(endVal) : null;
       if (!startRes) {
         enrouteBox.hidden = true;
+        currentOnRoute = [];
+        drawPicker();
         return;
       }
 
@@ -581,8 +593,17 @@ function init() {
 
       if (!onRoute.length) {
         enrouteBox.hidden = true;
+        currentOnRoute = [];
+        drawPicker();
         return;
       }
+
+      // If user hasn't selected anything yet, default select the discovered corridor pandals
+      if (picked.size === 0) {
+        onRoute.forEach((p) => picked.add(p.id));
+      }
+
+      currentOnRoute = onRoute;
 
       const titleEl = $('[data-enroute-title]');
       const subEl = $('[data-enroute-subtitle]');
@@ -616,6 +637,7 @@ function init() {
       }
 
       enrouteBox.hidden = false;
+      drawPicker();
     }
 
     const enrouteChips = $('[data-enroute-chips]');
@@ -642,10 +664,10 @@ function init() {
       const allPicked = onRoute.length > 0 && onRoute.every((p) => picked.has(p.id));
       if (allPicked) {
         onRoute.forEach((p) => picked.delete(p.id));
-        toast('Removed en-route pandals from selection');
+        toast('Removed corridor pandals from selection');
       } else {
         onRoute.forEach((p) => picked.add(p.id));
-        toast(`Added ${onRoute.length} en-route pandals to your plan`);
+        toast(`Added ${onRoute.length} corridor pandals to your plan`);
       }
       saveDraft();
       drawPicker();
@@ -708,20 +730,112 @@ function init() {
       }
 
       saveDraft();
-      if (m === 'custom') {
-        drawPicker();
-        updateEnroutePreview();
-      }
+      updateEnroutePreview();
+      drawPicker();
     }
     modeBtns.forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode)));
 
     function drawPicker() {
+      const isCorridorActive = mode === 'custom' && currentOnRoute.length > 0;
+      const customLabel = $('[data-custom-label]');
+      const customHint = $('[data-custom-hint]');
+      const extraWrap = $('[data-extra-wrap]');
+      const extraChips = $('[data-extra-chips]');
+      const pickerEl = $('[data-picker]');
+      const noteEl = $('[data-picked-note]');
+      if (!pickerEl) return;
+
       const q = el.search.value.trim().toLowerCase();
-      const pool = q ? data.pandals.filter((p) => `${p.name} ${p.area} ${p.station}`.toLowerCase().includes(q)) : [...picked].map((id) => byId.get(id)).filter(Boolean).concat(data.pandals.filter((p) => p.must && !picked.has(p.id)));
-      const rows = pool.slice(0, 10);
-      $('[data-picker]').innerHTML = rows.map((p) => `<button type="button" class="pick" aria-pressed="${picked.has(p.id)}" data-pick="${p.id}"><span class="pick-info"><b>${esc(p.name)}</b><small class="muted">${esc(p.station)} · ${esc(p.area)}</small></span><span class="pick-icon" aria-hidden="true">${picked.has(p.id) ? '✓' : '+'}</span></button>`).join('') || '<p class="count-note">No matches.</p>';
-      $('[data-picked-note]').textContent = `${picked.size} selected${q ? '' : ': search to add more'}`;
+      const onRouteIds = new Set(currentOnRoute.map((p) => p.id));
+      const corridorPicked = currentOnRoute.filter((p) => picked.has(p.id));
+      const extraPickedIds = [...picked].filter((id) => !onRouteIds.has(id));
+
+      if (isCorridorActive) {
+        if (customLabel) customLabel.textContent = 'Add extra pandals (Optional)';
+        if (customHint) {
+          customHint.textContent = 'Want to detour to other pandals? Search here or add from your checklist.';
+          customHint.style.display = 'block';
+        }
+
+        // Render extra stops added if any
+        if (extraWrap && extraChips) {
+          if (extraPickedIds.length > 0) {
+            extraChips.innerHTML = extraPickedIds.map((id) => {
+              const p = byId.get(id);
+              if (!p) return '';
+              return `<span class="extra-chip">
+                <span><b>${esc(p.name)}</b> <small class="muted">(${esc(p.area)})</small></span>
+                <button type="button" class="extra-chip-remove" data-remove-extra="${p.id}" aria-label="Remove ${esc(p.name)}" title="Remove stop">✕</button>
+              </span>`;
+            }).join('');
+            extraWrap.hidden = false;
+          } else {
+            extraWrap.hidden = true;
+            extraChips.innerHTML = '';
+          }
+        }
+
+        if (!q) {
+          // When not searching and corridor is active, DO NOT show duplicate corridor pandals
+          pickerEl.innerHTML = '';
+          pickerEl.hidden = true;
+          if (noteEl) {
+            if (extraPickedIds.length > 0) {
+              noteEl.textContent = `${corridorPicked.length} on corridor + ${extraPickedIds.length} extra stop${extraPickedIds.length > 1 ? 's' : ''} (${corridorPicked.length + extraPickedIds.length} total selected)`;
+            } else {
+              noteEl.textContent = `${corridorPicked.length} corridor pandal${corridorPicked.length !== 1 ? 's' : ''} selected: search above to add extra detours`;
+            }
+          }
+          return;
+        }
+
+        // When searching with corridor active:
+        pickerEl.hidden = false;
+        const matches = data.pandals.filter((p) => `${p.name} ${p.area} ${p.station}`.toLowerCase().includes(q));
+        const rows = matches.slice(0, 10);
+        if (!rows.length) {
+          pickerEl.innerHTML = '<p class="count-note" style="padding:10px 12px;margin:0">No matching pandals found.</p>';
+        } else {
+          pickerEl.innerHTML = rows.map((p) => {
+            const isPicked = picked.has(p.id);
+            const isOnRoute = onRouteIds.has(p.id);
+            return `<button type="button" class="pick" aria-pressed="${isPicked}" data-pick="${p.id}">
+              <span class="pick-info">
+                <span><b>${esc(p.name)}</b>${isOnRoute ? ' <span class="on-corridor-badge">On corridor</span>' : ''}</span>
+                <small class="muted">${esc(p.station)} · ${esc(p.area)}</small>
+              </span>
+              <span class="pick-icon" aria-hidden="true">${isPicked ? '✓' : '+'}</span>
+            </button>`;
+          }).join('');
+        }
+
+        if (noteEl) {
+          noteEl.textContent = `${matches.length} search match${matches.length === 1 ? '' : 'es'} · ${corridorPicked.length} corridor + ${extraPickedIds.length} extra selected`;
+        }
+
+      } else {
+        // Standard Custom Picker (no corridor active)
+        if (customLabel) customLabel.textContent = 'Choose pandals';
+        if (customHint) customHint.style.display = 'none';
+        if (extraWrap) extraWrap.hidden = true;
+        pickerEl.hidden = false;
+
+        const pool = q
+          ? data.pandals.filter((p) => `${p.name} ${p.area} ${p.station}`.toLowerCase().includes(q))
+          : [...picked].map((id) => byId.get(id)).filter(Boolean).concat(data.pandals.filter((p) => p.must && !picked.has(p.id)));
+        const rows = pool.slice(0, 10);
+        pickerEl.innerHTML = rows.map((p) => `
+          <button type="button" class="pick" aria-pressed="${picked.has(p.id)}" data-pick="${p.id}">
+            <span class="pick-info"><b>${esc(p.name)}</b><small class="muted">${esc(p.station)} · ${esc(p.area)}</small></span>
+            <span class="pick-icon" aria-hidden="true">${picked.has(p.id) ? '✓' : '+'}</span>
+          </button>
+        `).join('') || '<p class="count-note">No matches.</p>';
+        if (noteEl) {
+          noteEl.textContent = `${picked.size} selected${q ? '' : ': search to add more'}`;
+        }
+      }
     }
+
     $('[data-picker]').addEventListener('click', (e) => {
       const b = e.target.closest('[data-pick]'); if (!b) return;
       picked.has(b.dataset.pick) ? picked.delete(b.dataset.pick) : picked.add(b.dataset.pick);
@@ -729,14 +843,33 @@ function init() {
       drawPicker();
       updateEnroutePreview();
     });
-    el.search.addEventListener('input', drawPicker);
-    const useChecklistBtn = $('[data-use-checklist]') || $('[data-use-wish]');
-    useChecklistBtn?.addEventListener('click', () => {
-      check.items().forEach((id) => picked.add(id));
+
+    const extraWrapEl = $('[data-extra-wrap]');
+    extraWrapEl?.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-remove-extra]');
+      if (!btn) return;
+      const id = btn.dataset.removeExtra;
+      picked.delete(id);
       saveDraft();
       drawPicker();
       updateEnroutePreview();
-      toast(`${check.items().length} checklist pandals added`);
+      const p = byId.get(id);
+      toast(`Removed ${p ? p.name : 'pandal'} from extra stops`);
+    });
+
+    el.search.addEventListener('input', drawPicker);
+    const useChecklistBtn = $('[data-use-checklist]') || $('[data-use-wish]');
+    useChecklistBtn?.addEventListener('click', () => {
+      const items = check.items();
+      if (!items.length) {
+        toast('Your checklist is empty. Add pandals to your checklist first!');
+        return;
+      }
+      items.forEach((id) => picked.add(id));
+      saveDraft();
+      drawPicker();
+      updateEnroutePreview();
+      toast(`${items.length} checklist pandal${items.length === 1 ? '' : 's'} added`);
     });
 
     function build() {

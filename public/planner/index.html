@@ -128,8 +128,18 @@
       </div>
       <div class="enroute-chips" data-enroute-chips></div>
     </div>
-    <div data-opt="custom" hidden class="field"><label for="p-search">Choose pandals</label><input class="input" id="p-search" type="search" placeholder="Search to add pandals" autocomplete="off"><div class="picker-results" data-picker></div><p class="count-note" data-picked-note></p>
-      <button type="button" class="btn btn-ghost btn-sm" data-use-checklist><svg class="icon" aria-hidden="true"><use href="#i-checklist"/></svg> Use my checklist</button></div>
+    <div data-opt="custom" hidden class="field">
+      <label for="p-search" data-custom-label>Choose pandals</label>
+      <span class="muted" data-custom-hint style="font-size:12px;margin:-4px 0 8px;display:none"></span>
+      <input class="input" id="p-search" type="search" placeholder="Search to add pandals" autocomplete="off">
+      <div class="extra-picked-wrap" data-extra-wrap hidden>
+        <div class="extra-picked-title"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg> <span>Extra stops added</span></div>
+        <div class="extra-chips" data-extra-chips></div>
+      </div>
+      <div class="picker-results" data-picker></div>
+      <p class="count-note" data-picked-note></p>
+      <button type="button" class="btn btn-ghost btn-sm" data-use-checklist><svg class="icon" aria-hidden="true"><use href="#i-checklist"/></svg> Use my checklist</button>
+    </div>
     <div class="two" data-opt-limit>
       <div class="field"><label for="p-max">Number of stops</label><select class="select" id="p-max"><option>5</option><option selected>8</option><option>10</option><option>15</option><option>20</option></select></div>
       <div class="field"><label for="p-must">Priority</label><select class="select" id="p-must"><option value="1">Must-visits first</option><option value="0">Closest first</option></select></div>
