@@ -566,7 +566,7 @@ write('map/index.html', layout({
 // ================= PARKING =================
 write('parking/index.html', layout({
   title: `Kolkata Durga Puja ${SITE.year} Parking Lots: Car & Bike Parking Near Pandals | ${SITE.name}`,
-  desc: `Find verified car and two-wheeler parking spaces within 2km radius of Kolkata Durga Puja pandals. Direct Google Maps navigation links for 25 shortlisted parking spots across North, South, Central & East Kolkata.`,
+  desc: `Find verified car and two-wheeler parking spaces within 2km radius of Kolkata Durga Puja pandals. Direct Google Maps navigation links for ${PARKING_LOTS.length} shortlisted parking spots across North, South, Central & East Kolkata.`,
   pathname: '/parking', navKey: 'explore', page: 'parking',
   jsonld: [crumbs([['Home', '/'], ['Parking', '/parking']])],
   body: `<div class="wrap">
@@ -718,7 +718,7 @@ for (const p of PANDALS) {
         `).join('')}
       </div>
       <div class="parking-footer-links">
-        <a class="parking-dir-link" href="/parking">${icon('car')} View all 25 Kolkata Pujo parking lots →</a>
+        <a class="parking-dir-link" href="/parking">${icon('car')} View all ${PARKING_LOTS.length} Kolkata Pujo parking lots →</a>
       </div>
     </div>
   </section>

@@ -229,11 +229,20 @@ export const PARKING_LOTS = [
   {
     id: 'vip-road-haldiram-kaikhali',
     name: 'VIP Road Haldiram / Kaikhali Service Flank',
-    serves: 'Kestopur, Prafulla Kanan, Baguiati & Aswininagar',
+    serves: 'Kestopur, Baguiati, Kaikhali, Tegharia & Chinar Park',
     address: '160, VIP Rd, Dhalipara, Tegharia, Kaikhali, Kolkata 700052',
     mapUrl: 'https://maps.google.com/?cid=9022347507500942852',
     zone: 'north',
-    matchTerms: ['kestopur', 'prafulla kanan', 'prafullakanan', 'baguiati', 'baguihati', 'aswininagar', 'aswini nagar', 'kaikhali', 'tegharia', 'chinar park', 'bablatala', 'rajarhat', 'gopalpur', 'narayanpur']
+    matchTerms: ['kestopur', 'prafulla kanan', 'prafullakanan', 'baguiati', 'baguihati', 'aswininagar', 'aswini nagar', 'kaikhali', 'tegharia', 'chinar park', 'bablatala', 'rajarhat', 'gopalpur', 'narayanpur', 'arjunpur', 'dashadrone', 'tentultala', 'salua', 'bishnupur', 'jyangra', 'atghara', 'reckjoani', 'sahabagan']
+  },
+  {
+    id: 'city-centre-2',
+    name: 'City Centre 2 Parking Lot',
+    serves: 'Chinar Park, Rajarhat Main Road, Dashadrone, Tegharia & Atghara',
+    address: 'City Centre 2, Action Area IID, Chinar Park, Rajarhat, Kolkata 700136',
+    mapUrl: 'https://maps.google.com/?q=City+Centre+New+Town+Kolkata',
+    zone: 'east',
+    matchTerms: ['chinar park', 'rajarhat', 'dashadrone', 'tegharia', 'bablatala', 'kalipark', 'salua', 'kaikhali', 'arjunpur', 'gopalpur', 'narayanpur', 'tentultala', 'bishnupur', 'jyangra', 'atghara', 'reckjoani', 'city centre 2', 'cc2', 'action area iid']
   },
   {
     id: 'dum-dum-station',
@@ -531,6 +540,21 @@ Gopalpur Sarbojanin Durgotsab|Gopalpur, Rajarhat|east|Jai Hind (Airport)|w:70,t:
 Narayanpur Sabuj Sangha|Narayanpur, Rajarhat|east|Jai Hind (Airport)|w:60,t:Celebrated club puja drawing massive festive crowds for its imposing sculptures and cultural exhibits
 Bablatala Sarbojanin Durgotsav|Bablatala, Rajarhat Main Road|east|Jai Hind (Airport)|w:45,t:Vibrant neighbourhood celebration connecting Rajarhat and VIP corridor with spectacular festive lighting
 Rajarhat Kalipark Sarbojanin|Kalipark, Rajarhat Main Road|east|Jai Hind (Airport)|w:50,t:Popular community puja known for colorful artistic themes and enthusiastic neighbourhood participation
+Arjunpur Amra Sabai Club|Arjunpur, Baguiati-Tegharia (Near Chinar Park)|east|Jai Hind (Airport)|m,w:42,t:Renowned artist-driven theme powerhouse famed for avant-garde installations, philosophical narratives and evocative idol aesthetics
+Chinar Park Adhibasibrinda|Chinar Park, Tegharia Crossing|east|Jai Hind (Airport)|w:52,t:Energetic crossroads hub at Chinar Park intersection known for creative contemporary pandal themes and vibrant cultural adda
+Dashadrone Bayam Samiti|Dashadrone, Rajarhat Main Road|east|Jai Hind (Airport)|w:48,t:Popular community celebration along Rajarhat arterial road featuring grand folk architecture and traditional rituals
+Tegharia Shitalatala Sarbojanin|Tegharia, Near Chinar Park|east|Jai Hind (Airport)|w:46,t:Vibrant neighborhood festival celebrating traditional Bengal artistry, dazzling illuminations and inclusive community feasts
+Tegharia Tarun Dal|Sahabagan, Tegharia|east|Jai Hind (Airport)|w:45,t:Long-standing community puja celebrated for vibrant cultural events and ornate pandal decorations
+Tentultala Pallishree Sangha|Tentultala, Rajarhat Main Road|east|Jai Hind (Airport)|w:54,t:Bustling suburban powerhouse celebrated for handcrafted rural Bengal motifs and festive musical evenings
+Rajarhat Bishnupur Mitra Bari|Bishnupur, Rajarhat|east|Jai Hind (Airport)|b,m,w:85,t:Historic 18th-century zamindar puja (est. 1723–1740) of Sir Ramesh Chandra Mitra's ancestral family, featuring an exquisite sabeki idol flanked by Jaya and Bijaya
+Rajarhat Gopalpur House Tarun Sangha|Gopalpur House, Rajarhat|east|Jai Hind (Airport)|w:65,t:Grand traditional barowari festivities with impressive mandap architecture and rhythmic dhaki performances
+Salua Sarbojanin Durgotsab|Salua, Rajarhat Main Road|east|Jai Hind (Airport)|w:42,t:Key corridor community puja connecting VIP Road and Chinar Park with imaginative cultural installations
+Rajarhat Netaji Sangha|Lalkuthi, Rajarhat Chowmatha|east|Jai Hind (Airport)|w:75,t:Prominent landmark celebration near Rajarhat Chowmatha renowned for monumental decorative lighting and traditional idol worship
+Kaikhali Nabajiban Sangha|Kaikhali, VIP Connector|east|Jai Hind (Airport)|w:35,t:Warm community celebration near the Airport-Rajarhat gateway featuring illuminated arched entryways and cultural stage shows
+Rajarhat Pragati Sangha|Bablatala, Sourav Ganguly Avenue, Rajarhat|east|Jai Hind (Airport)|w:48,t:Energetic youthful club showcase known for themed social messaging and vibrant festive enthusiasm
+Jyangra Pallyshree Sarbojanin|Jyangra, Rajarhat-Baguiati|east|Jai Hind (Airport)|w:45,t:Heritage-infused neighborhood pandal blending classical clay sculpting with community folklore exhibitions
+Atghara Noapara Baroary|Atghara, Near Chinar Park & Rajarhat|east|Jai Hind (Airport)|w:44,t:Traditional barowari celebration with grand community cultural functions, artisan clay sculpting and vibrant festive lighting
+Reckjoani Sarbojanin Durgotsav|Reckjoani, Rajarhat Main Road|east|Jai Hind (Airport)|w:72,t:Prominent Rajarhat suburban gathering famed for traditional rituals and grand community bhog distribution
 `.trim().split('\n');
 
 export const slugify = (s) =>
