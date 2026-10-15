@@ -2829,6 +2829,8 @@ body.has-cta { padding-bottom: calc(var(--nav-h) + 84px + env(safe-area-inset-bo
   .install-prompt {
     display: none !important;
   }
+}
+
 /* ---------- Interactive App Guide Modal (First-time Onboarding & Tour) ---------- */
 body.modal-open {
   overflow: hidden !important;
@@ -2837,7 +2839,7 @@ body.modal-open {
 .guide-modal-wrap {
   position: fixed;
   inset: 0;
-  z-index: 1000;
+  z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2845,33 +2847,36 @@ body.modal-open {
   box-sizing: border-box;
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
   transition: opacity .25s ease, visibility .25s ease;
 }
 
 .guide-modal-wrap.is-open {
-  opacity: 1;
-  visibility: visible;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
 }
 
 .guide-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(15, 23, 42, 0.68);
+  background: rgba(15, 23, 42, 0.72);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
 
 .guide-dialog {
   position: relative;
+  z-index: 2;
   width: 100%;
   max-width: 480px;
   background: #FFFFFF;
   background: linear-gradient(175deg, #FFFFFF 0%, #FDFBF8 100%);
-  border: 1.5px solid rgba(212, 160, 23, 0.45);
+  border: 1.5px solid rgba(212, 160, 23, 0.5);
   border-radius: 24px;
   box-shadow: 
-    0 24px 60px -10px rgba(15, 23, 42, 0.35),
-    0 8px 24px rgba(212, 160, 23, 0.15),
+    0 24px 60px -10px rgba(15, 23, 42, 0.4),
+    0 8px 24px rgba(212, 160, 23, 0.18),
     inset 0 1px 1px rgba(255, 255, 255, 0.95);
   padding: 22px 20px 20px;
   box-sizing: border-box;
@@ -2940,19 +2945,24 @@ body.modal-open {
   transform: scale(1.08);
 }
 
+.guide-close-btn .icon {
+  width: 16px;
+  height: 16px;
+}
+
 .guide-body {
   position: relative;
-  min-height: 240px;
+  min-height: 220px;
 }
 
 .guide-slide {
   display: none;
   flex-direction: column;
-  animation: guideSlideFade .25s ease-out;
 }
 
 .guide-slide.is-active {
-  display: flex;
+  display: flex !important;
+  animation: guideSlideFade .25s ease-out;
 }
 
 @keyframes guideSlideFade {
@@ -3139,37 +3149,40 @@ body.modal-open {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 12.5px;
+  font-family: var(--font-body);
+  font-size: 13px;
   font-weight: 600;
   color: #FFFFFF;
   background: rgba(255, 255, 255, 0.16);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(212, 160, 23, 0.45);
+  border: 1.5px solid rgba(212, 160, 23, 0.6);
   border-radius: 999px;
-  padding: 6px 14px 6px 10px;
-  margin-bottom: 12px;
+  padding: 8px 16px 8px 12px;
+  margin-bottom: 14px;
   cursor: pointer;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
   transition: all .2s var(--spring);
   width: fit-content;
+  outline: none;
 }
 
 .hero-guide-badge:hover {
-  background: rgba(255, 255, 255, 0.26);
+  background: rgba(255, 255, 255, 0.28);
   border-color: var(--gold);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 160, 23, 0.35);
 }
 
 .hero-guide-badge .icon {
-  width: 15px;
-  height: 15px;
+  width: 17px;
+  height: 17px;
   color: var(--gold);
 }
 
 .hero-guide-badge span {
-  color: var(--gold);
-  font-weight: 700;
+  color: #FFFFFF;
+  font-weight: 600;
   transition: transform .15s ease;
 }
 

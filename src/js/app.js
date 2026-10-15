@@ -1762,18 +1762,20 @@ function initGuide() {
   const stepText = $('[data-guide-step-text]', modal);
   const btnPrev = $('[data-guide-prev]', modal);
   const btnNext = $('[data-guide-next]', modal);
-  const openTriggers = $$('[data-open-guide]');
   let currentStep = 0;
 
   function showStep(idx) {
     currentStep = Math.max(0, Math.min(idx, slides.length - 1));
     slides.forEach((s, i) => {
-      s.classList.toggle('is-active', i === currentStep);
-      s.hidden = (i !== currentStep);
+      const active = (i === currentStep);
+      s.classList.toggle('is-active', active);
+      s.style.display = active ? 'flex' : 'none';
+      s.setAttribute('aria-hidden', active ? 'false' : 'true');
     });
     dots.forEach((d, i) => {
-      d.classList.toggle('is-active', i === currentStep);
-      d.setAttribute('aria-selected', i === currentStep ? 'true' : 'false');
+      const active = (i === currentStep);
+      d.classList.toggle('is-active', active);
+      d.setAttribute('aria-selected', active ? 'true' : 'false');
     });
     if (stepText) {
       stepText.textContent = `Quick Guide · ${currentStep + 1} of ${slides.length}`;
@@ -1794,11 +1796,9 @@ function initGuide() {
 
   function openGuide() {
     showStep(0);
-    modal.hidden = false;
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
     document.body.classList.add('modal-open');
-    requestAnimationFrame(() => {
-      modal.classList.add('is-open');
-    });
   }
 
   function closeGuide(markDismissed = true) {
@@ -1806,21 +1806,21 @@ function initGuide() {
       store.set('pp_guide_dismissed', true);
     }
     modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('modal-open');
-    setTimeout(() => {
-      if (!modal.classList.contains('is-open')) {
-        modal.hidden = true;
-      }
-    }, 280);
   }
 
   // Dismiss listeners: "Skip Tutorial", close (x) button, and backdrop click
   $$('[data-guide-dismiss]', modal).forEach((btn) => {
-    btn.addEventListener('click', () => closeGuide(true));
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeGuide(true);
+    });
   });
 
   // Next / Finish button
-  btnNext?.addEventListener('click', () => {
+  btnNext?.addEventListener('click', (e) => {
+    e.preventDefault();
     if (currentStep < slides.length - 1) {
       showStep(currentStep + 1);
     } else {
@@ -1829,7 +1829,8 @@ function initGuide() {
   });
 
   // Previous button
-  btnPrev?.addEventListener('click', () => {
+  btnPrev?.addEventListener('click', (e) => {
+    e.preventDefault();
     if (currentStep > 0) {
       showStep(currentStep - 1);
     }
@@ -1837,12 +1838,15 @@ function initGuide() {
 
   // Step indicator dots
   dots.forEach((dot, i) => {
-    dot.addEventListener('click', () => showStep(i));
+    dot.addEventListener('click', (e) => {
+      e.preventDefault();
+      showStep(i);
+    });
   });
 
   // Keyboard navigation: Escape to exit/skip, Left/Right arrows for steps
   window.addEventListener('keydown', (e) => {
-    if (modal.hidden || !modal.classList.contains('is-open')) return;
+    if (!modal.classList.contains('is-open')) return;
     if (e.key === 'Escape') {
       closeGuide(true);
     } else if (e.key === 'ArrowRight') {
@@ -1852,26 +1856,33 @@ function initGuide() {
     }
   });
 
-  // Manual trigger buttons across the site (header, footer, home hero)
-  openTriggers.forEach((trigger) => {
-    trigger.addEventListener('click', (e) => {
+  // Global event delegation for manual trigger buttons across the site
+  document.addEventListener('click', (e) => {
+    const trigger = e.target.closest('[data-open-guide]');
+    if (trigger) {
       e.preventDefault();
       openGuide();
-    });
+    }
   });
 
-  // Auto-launch for first-time visitors after smooth page load delay (600ms)
+  // Auto-launch for first-time visitors after smooth page load delay (500ms)
   try {
     const isDismissed = store.get('pp_guide_dismissed', false);
-    if (!isDismissed) {
+    const forceGuide = window.location.search.includes('guide=1') || window.location.hash === '#guide';
+    if (!isDismissed || forceGuide) {
       setTimeout(() => {
-        if (!store.get('pp_guide_dismissed', false)) {
+        if (!store.get('pp_guide_dismissed', false) || forceGuide) {
           openGuide();
         }
-      }, 600);
+      }, 500);
     }
   } catch (e) {}
 }
-initGuide();
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initGuide);
+} else {
+  initGuide();
+}
 
 

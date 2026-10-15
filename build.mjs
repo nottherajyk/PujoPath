@@ -67,7 +67,7 @@ const sprite = `<svg xmlns="http://www.w3.org/2000/svg" style="display:none" ari
 <symbol id="i-parking" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" stroke-width="2"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 <symbol id="i-locate" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8" fill="none"/></symbol>
 <symbol id="i-lotus" viewBox="0 0 64 64"><path d="M32 8c5 8 6 16 0 27-6-11-5-19 0-27zM12 22c9 1 16 6 19 15-9 1-16-3-19-15zM52 22c-3 12-10 16-19 15 3-9 10-14 19-15zM6 38c10-2 18 1 24 8-10 4-19 1-24-8zM58 38c-5 9-14 12-24 8 6-7 14-10 24-8zM32 50c-8 0-15 3-20 8h40c-5-5-12-8-20-8z"/></symbol>
-<symbol id="i-guide" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 1.5-2 2-2 3.5M12 16.5h.01"/></symbol>
+<symbol id="i-guide" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 1.5-2 2-2 3.5"/><circle cx="12" cy="17" r="1.2" fill="currentColor" stroke="none"/></symbol>
 <symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
 </svg>`;
 
@@ -87,7 +87,7 @@ const SUB = [
 const KEYWORDS = ['PujoPath', 'PujaPath', 'Kolkata Durga Puja 2026', 'Durga Puja pandal hopping Kolkata', 'Kolkata pandal guide', 'Kolkata metro pandal route', 'Durga Puja route planner', 'best pandals in Kolkata 2026', 'North Kolkata pujo', 'South Kolkata pujo', 'Kolkata metro stations near pandals', 'bonedi bari pujo', 'Maddox Square', 'Sree Bhumi', 'Md Ali Park', 'Deshapriya Park'];
 
 const guideModalHTML = `
-<div class="guide-modal-wrap" data-guide-modal hidden>
+<div class="guide-modal-wrap" data-guide-modal aria-hidden="true">
   <div class="guide-backdrop" data-guide-dismiss></div>
   <div class="guide-dialog" role="dialog" aria-modal="true" aria-labelledby="guideModalTitle">
     <div class="guide-topbar">
