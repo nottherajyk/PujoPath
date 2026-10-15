@@ -71,7 +71,17 @@
     <div class="seg" role="group" aria-label="Build route by"><button type="button" aria-pressed="true" data-mode="zone">By zone</button><button type="button" aria-pressed="false" data-mode="line">By metro</button><button type="button" aria-pressed="false" data-mode="custom">Custom</button></div>
     <div class="two">
       <div class="field"><label for="p-date">Date</label><input class="input" id="p-date" type="date"></div>
-      <div class="field"><label for="p-start">Starting station</label><select class="select" id="p-start"><option value="Dakshineswar">Dakshineswar (Blue)</option><option value="Baranagar">Baranagar (Blue)</option><option value="Noapara">Noapara (Blue)</option><option value="Dum Dum">Dum Dum (Blue)</option><option value="Belgachia">Belgachia (Blue)</option><option value="Shyambazar">Shyambazar (Blue)</option><option value="Shobhabazar Sutanuti">Shobhabazar Sutanuti (Blue)</option><option value="Girish Park">Girish Park (Blue)</option><option value="Mahatma Gandhi Road">Mahatma Gandhi Road (Blue)</option><option value="Central">Central (Blue)</option><option value="Chandni Chowk">Chandni Chowk (Blue)</option><option value="Esplanade">Esplanade (Blue)</option><option value="Park Street">Park Street (Blue)</option><option value="Maidan">Maidan (Blue)</option><option value="Rabindra Sadan">Rabindra Sadan (Blue)</option><option value="Netaji Bhavan">Netaji Bhavan (Blue)</option><option value="Jatin Das Park">Jatin Das Park (Blue)</option><option value="Kalighat">Kalighat (Blue)</option><option value="Rabindra Sarobar">Rabindra Sarobar (Blue)</option><option value="Mahanayak Uttam Kumar">Mahanayak Uttam Kumar (Blue)</option><option value="Netaji">Netaji (Blue)</option><option value="Masterda Surya Sen">Masterda Surya Sen (Blue)</option><option value="Gitanjali">Gitanjali (Blue)</option><option value="Kavi Nazrul">Kavi Nazrul (Blue)</option><option value="Shahid Khudiram">Shahid Khudiram (Blue)</option><option value="Kavi Subhash">Kavi Subhash (Blue)</option><option value="Howrah Maidan">Howrah Maidan (Green)</option><option value="Howrah">Howrah (Green)</option><option value="Mahakaran">Mahakaran (Green)</option><option value="Sealdah">Sealdah (Green)</option><option value="Phoolbagan">Phoolbagan (Green)</option><option value="Salt Lake Stadium">Salt Lake Stadium (Green)</option><option value="Bengal Chemical">Bengal Chemical (Green)</option><option value="City Centre">City Centre (Green)</option><option value="Central Park">Central Park (Green)</option><option value="Karunamoyee">Karunamoyee (Green)</option><option value="Salt Lake Sector V">Salt Lake Sector V (Green)</option><option value="Beliaghata">Beliaghata (Orange)</option><option value="Barun Sengupta">Barun Sengupta (Orange)</option><option value="Ritwik Ghatak">Ritwik Ghatak (Orange)</option><option value="VIP Bazaar">VIP Bazaar (Orange)</option><option value="Hemanta Mukhopadhyay">Hemanta Mukhopadhyay (Orange)</option><option value="Kavi Sukanta">Kavi Sukanta (Orange)</option><option value="Jyotirindra Nandi">Jyotirindra Nandi (Orange)</option><option value="Satyajit Ray">Satyajit Ray (Orange)</option><option value="Dum Dum Cantonment">Dum Dum Cantonment (Yellow)</option><option value="Jessore Road">Jessore Road (Yellow)</option><option value="Jai Hind (Airport)">Jai Hind (Airport) (Yellow)</option><option value="Majerhat">Majerhat (Purple)</option><option value="Taratala">Taratala (Purple)</option><option value="Behala Bazar">Behala Bazar (Purple)</option><option value="Behala Chowrasta">Behala Chowrasta (Purple)</option><option value="Sakherbazar">Sakherbazar (Purple)</option><option value="Thakurpukur">Thakurpukur (Purple)</option><option value="Joka">Joka (Purple)</option></select></div>
+      <div class="field station-search-field">
+        <label for="p-start">Starting station</label>
+        <div class="station-search-box">
+          <input class="input" id="p-start" type="search" placeholder="Type station name (e.g. Kalighat)" autocomplete="off" list="station-datalist" value="Shyambazar" enterkeyhint="done" style="padding-left:38px">
+          <svg class="icon icon-l" aria-hidden="true"><use href="#i-search"/></svg>
+          <datalist id="station-datalist">
+            <option value="Dakshineswar">Dakshineswar (Blue Line)</option><option value="Baranagar">Baranagar (Blue Line)</option><option value="Noapara">Noapara (Blue Line)</option><option value="Dum Dum">Dum Dum (Blue Line)</option><option value="Belgachia">Belgachia (Blue Line)</option><option value="Shyambazar">Shyambazar (Blue Line)</option><option value="Shobhabazar Sutanuti">Shobhabazar Sutanuti (Blue Line)</option><option value="Girish Park">Girish Park (Blue Line)</option><option value="Mahatma Gandhi Road">Mahatma Gandhi Road (Blue Line)</option><option value="Central">Central (Blue Line)</option><option value="Chandni Chowk">Chandni Chowk (Blue Line)</option><option value="Esplanade">Esplanade (Blue Line)</option><option value="Park Street">Park Street (Blue Line)</option><option value="Maidan">Maidan (Blue Line)</option><option value="Rabindra Sadan">Rabindra Sadan (Blue Line)</option><option value="Netaji Bhavan">Netaji Bhavan (Blue Line)</option><option value="Jatin Das Park">Jatin Das Park (Blue Line)</option><option value="Kalighat">Kalighat (Blue Line)</option><option value="Rabindra Sarobar">Rabindra Sarobar (Blue Line)</option><option value="Mahanayak Uttam Kumar">Mahanayak Uttam Kumar (Blue Line)</option><option value="Netaji">Netaji (Blue Line)</option><option value="Masterda Surya Sen">Masterda Surya Sen (Blue Line)</option><option value="Gitanjali">Gitanjali (Blue Line)</option><option value="Kavi Nazrul">Kavi Nazrul (Blue Line)</option><option value="Shahid Khudiram">Shahid Khudiram (Blue Line)</option><option value="Kavi Subhash">Kavi Subhash (Blue Line)</option><option value="Howrah Maidan">Howrah Maidan (Green Line)</option><option value="Howrah">Howrah (Green Line)</option><option value="Mahakaran">Mahakaran (Green Line)</option><option value="Sealdah">Sealdah (Green Line)</option><option value="Phoolbagan">Phoolbagan (Green Line)</option><option value="Salt Lake Stadium">Salt Lake Stadium (Green Line)</option><option value="Bengal Chemical">Bengal Chemical (Green Line)</option><option value="City Centre">City Centre (Green Line)</option><option value="Central Park">Central Park (Green Line)</option><option value="Karunamoyee">Karunamoyee (Green Line)</option><option value="Salt Lake Sector V">Salt Lake Sector V (Green Line)</option><option value="Beliaghata">Beliaghata (Orange Line)</option><option value="Barun Sengupta">Barun Sengupta (Orange Line)</option><option value="Ritwik Ghatak">Ritwik Ghatak (Orange Line)</option><option value="VIP Bazaar">VIP Bazaar (Orange Line)</option><option value="Hemanta Mukhopadhyay">Hemanta Mukhopadhyay (Orange Line)</option><option value="Kavi Sukanta">Kavi Sukanta (Orange Line)</option><option value="Jyotirindra Nandi">Jyotirindra Nandi (Orange Line)</option><option value="Satyajit Ray">Satyajit Ray (Orange Line)</option><option value="Dum Dum Cantonment">Dum Dum Cantonment (Yellow Line)</option><option value="Jessore Road">Jessore Road (Yellow Line)</option><option value="Jai Hind (Airport)">Jai Hind (Airport) (Yellow Line)</option><option value="Majerhat">Majerhat (Purple Line)</option><option value="Taratala">Taratala (Purple Line)</option><option value="Behala Bazar">Behala Bazar (Purple Line)</option><option value="Behala Chowrasta">Behala Chowrasta (Purple Line)</option><option value="Sakherbazar">Sakherbazar (Purple Line)</option><option value="Thakurpukur">Thakurpukur (Purple Line)</option><option value="Joka">Joka (Purple Line)</option>
+          </datalist>
+          <div class="station-suggestions" data-station-suggestions hidden></div>
+        </div>
+      </div>
     </div>
     <div class="field" data-opt="zone"><label for="p-zone">Zone</label><select class="select" id="p-zone"><option value="north">North Heritage</option><option value="south">South Theme Hubs</option><option value="central">Central Classics</option><option value="east">Salt Lake & East</option><option value="bonedi">Bonedi Bari</option></select></div>
     <div class="field" data-opt="line" hidden><label for="p-line">Metro line</label><select class="select" id="p-line"><option value="blue">Blue Line (North-South)</option><option value="green">Green Line (East-West)</option><option value="orange">Orange Line (EM Bypass)</option><option value="yellow">Yellow Line (Airport)</option><option value="purple">Purple Line (Joka)</option></select></div>
@@ -94,22 +104,24 @@
 <div class="sticky-cta" data-cta><div class="wrap"><a class="btn btn-primary btn-block" data-open-maps target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-map"/></svg> Open route in Google Maps</a></div></div>
 </main>
 <footer class="site-footer"><div class="wrap">
-  <div class="footer-grid">
-    <div class="footer-brand">
-      <div class="brand"><svg class="lotus" aria-hidden="true"><use href="#i-lotus"/></svg><span>Puja<b>Path</b></span></div>
-      <p>Kolkata's definitive Durga Puja guide, pandal directory and metro route planner.</p>
+  <div class="footer-compact">
+    <div class="footer-top">
+      <a class="brand" href="/" aria-label="PujaPath home"><svg class="lotus" aria-hidden="true"><use href="#i-lotus"/></svg><span>Puja<b>Path</b></span></a>
+      <p class="footer-tagline">Kolkata’s Durga Puja 2026 guide & metro route planner.</p>
     </div>
-    <div class="footer-links">
-      <b>Quick links</b>
-      <nav aria-label="Footer quick links"><a href="/pandals">All Pandals</a><a href="/hopping">Explore Zones</a><a href="/planner">Route Planner</a><a href="/metro">Metro Guide</a><a href="/map">Metro Map</a><a href="/support">Support</a><a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Service</a></nav>
+    <nav class="footer-nav" aria-label="Footer quick links">
+      <a href="/pandals">Pandals</a>
+      <a href="/hopping">Zones</a>
+      <a href="/planner">Planner</a>
+      <a href="/metro">Metro</a>
+      <a href="/map">Map</a>
+      <a href="/support">Support</a>
+      <a href="/privacy">Privacy</a>
+      <a href="/terms">Terms</a>
+    </nav>
+    <div class="footer-bottom">
+      <p>© 2026 PujaPath · Local device storage, zero ad tracking.</p>
     </div>
-    <div class="footer-meta">
-      <b>Durga Puja 2026</b>
-      <p>Pandal timings and metro schedules are community-sourced and subject to change. Confirm with local committees.</p>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <p>© 2026 PujaPath. Built with devotion for Kolkata Durga Puja. Local device storage, zero advertising tracking.</p>
   </div>
 </div></footer>
 <nav class="bottom-nav" aria-label="Primary mobile"><a href="/"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg><span>Home</span></a><a href="/pandals" aria-current="page"><svg class="icon" aria-hidden="true"><use href="#i-compass"/></svg><span>Explore</span></a><a href="/metro"><svg class="icon" aria-hidden="true"><use href="#i-train"/></svg><span>Metro</span></a><a href="/support"><svg class="icon" aria-hidden="true"><use href="#i-support"/></svg><span>Support</span></a></nav>

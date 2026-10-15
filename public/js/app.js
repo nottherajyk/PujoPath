@@ -95,7 +95,7 @@ function init() {
 
   /* ================= PANDALS ================= */
   function pandals() {
-    const list = $('[data-list]'), more = $('[data-more]'), note = $('[data-more-note]'), count = $('[data-count]'), reset = $('[data-reset]');
+    const list = $('[data-list]'), more = $('[data-more]'), note = $('[data-more-note]'), reset = $('[data-reset]');
     const els = { q: $('#q'), zone: $('#f-zone'), line: $('#f-line'), type: $('#f-type'), walk: $('#f-walk') };
     const savedFilters = store.get('pp_pandal_filters', {});
     for (const k of Object.keys(els)) {
@@ -128,7 +128,6 @@ function init() {
       const slice = results.slice(0, shown);
       list.innerHTML = slice.length ? slice.map((p) => cardHTML(p, ctx)).join('') : `<div class="empty" style="grid-column:1/-1"><h3>No pandals match</h3><p>Try a different spelling, area or metro station.</p><button class="btn btn-primary" type="button" data-reset-inline>Clear filters</button></div>`;
       syncWish(list);
-      count.textContent = results.length ? `Showing ${slice.length} of ${results.length} pandals` : '0 pandals';
       const left = results.length - slice.length;
       more.hidden = left <= 0; note.textContent = left > 0 ? `${left} more to explore` : '';
       more.textContent = `View more pandals`;
@@ -177,6 +176,7 @@ function init() {
   }
 
   /* ================= PLANNER ================= */
+  /* ================= PLANNER ================= */
   function planner() {
     const form = $('[data-plan-form]');
     const el = { date: $('#p-date'), start: $('#p-start'), zone: $('#p-zone'), line: $('#p-line'), max: $('#p-max'), must: $('#p-must'), search: $('#p-search') };
@@ -187,10 +187,96 @@ function init() {
     const today = new Date(); today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
     let mode = saved.mode || 'zone'; let picked = new Set(saved.picked || []); let route = []; let shown = PAGE;
 
+    function resolveStation(val) {
+      if (!val) return 'Shyambazar';
+      const clean = val.trim();
+      if (graph.has(clean)) return clean;
+      const lower = clean.toLowerCase();
+      for (const s of graph.keys()) {
+        if (s.toLowerCase() === lower) return s;
+      }
+      for (const s of graph.keys()) {
+        if (s.toLowerCase().startsWith(lower)) return s;
+      }
+      for (const s of graph.keys()) {
+        if (s.toLowerCase().includes(lower)) return s;
+      }
+      return 'Shyambazar';
+    }
+
     el.date.value = saved.date && saved.date >= today.toISOString().slice(0, 10) ? saved.date : today.toISOString().slice(0, 10);
     el.start.value = saved.start || 'Shyambazar';
     if (saved.zone) el.zone.value = saved.zone; if (saved.line) el.line.value = saved.line;
     if (saved.max) el.max.value = saved.max; if (saved.must != null) el.must.value = saved.must;
+
+    // Station search suggestions
+    const startSugg = $('[data-station-suggestions]');
+    if (startSugg && el.start) {
+      const stationList = [];
+      const seen = new Set();
+      data.lines.forEach((l) => {
+        l.stations.forEach((s) => {
+          if (!seen.has(s)) {
+            seen.add(s);
+            stationList.push({ name: s, line: l.name.replace(' Line', '') });
+          }
+        });
+      });
+
+      function renderSuggestions(q = '') {
+        const term = q.trim().toLowerCase();
+        const matches = term
+          ? stationList.filter((s) => s.name.toLowerCase().includes(term) || s.line.toLowerCase().includes(term)).slice(0, 8)
+          : stationList.slice(0, 8);
+        if (!matches.length) {
+          startSugg.innerHTML = '<div style="padding:10px 12px;font-size:13px;color:var(--muted)">No matching metro stations</div>';
+        } else {
+          startSugg.innerHTML = matches.map((s) => `
+            <button type="button" class="station-sugg-btn" data-station-pick="${esc(s.name)}">
+              <span><b>${esc(s.name)}</b></span>
+              <small>${esc(s.line)} Line</small>
+            </button>
+          `).join('');
+        }
+        startSugg.hidden = false;
+      }
+
+      el.start.addEventListener('focus', () => renderSuggestions(el.start.value));
+      el.start.addEventListener('input', () => {
+        renderSuggestions(el.start.value);
+        saveDraft();
+      });
+      el.start.addEventListener('change', () => {
+        const resolved = resolveStation(el.start.value);
+        el.start.value = resolved;
+        saveDraft();
+      });
+      el.start.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const first = $('[data-station-pick]', startSugg);
+          if (first) el.start.value = first.dataset.stationPick;
+          else el.start.value = resolveStation(el.start.value);
+          startSugg.hidden = true;
+          saveDraft();
+          el.start.blur();
+        } else if (e.key === 'Escape') {
+          startSugg.hidden = true;
+        }
+      });
+      startSugg.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-station-pick]');
+        if (!btn) return;
+        el.start.value = btn.dataset.stationPick;
+        startSugg.hidden = true;
+        saveDraft();
+      });
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.station-search-field')) {
+          startSugg.hidden = true;
+        }
+      });
+    }
 
     // deep links
     if (params.get('zone') && ctx.zones[params.get('zone')]) { mode = 'zone'; el.zone.value = params.get('zone'); }
@@ -231,7 +317,9 @@ function init() {
     $('[data-use-wish]').addEventListener('click', () => { wish.list().forEach((id) => picked.add(id)); saveDraft(); drawPicker(); toast(`${wish.list().length} wishlist pandals added`); });
 
     function build() {
-      const start = el.start.value; const h = hopsFrom(start);
+      const start = resolveStation(el.start.value);
+      el.start.value = start;
+      const h = hopsFrom(start);
       const d = (p) => h.get(p.station) ?? 30;
       let pool;
       if (mode === 'zone') pool = data.pandals.filter((p) => (el.zone.value === 'bonedi' ? p.bonedi : p.zone === el.zone.value));
@@ -253,7 +341,7 @@ function init() {
       if (!route.length) {
         itin.innerHTML = '<li class="empty">No pandals to route yet. Pick a zone, line or some pandals.</li>'; summary.innerHTML = ''; cta.classList.remove('show'); more.hidden = true; return;
       }
-      const start = el.start.value, h = hopsFrom(start);
+      const start = resolveStation(el.start.value), h = hopsFrom(start);
       let stations = h.get(route[0].station) ?? 0;
       for (let i = 1; i < route.length; i++) stations += hop(route[i - 1].station, route[i].station);
       const mins = stations * 3 + route.length * 20;
@@ -441,7 +529,7 @@ function init() {
 
 /* ---------- Scroll-reveal animation ---------- */
 if (!document.documentElement.classList.contains('reduced-motion')) {
-  const reveals = document.querySelectorAll('.section, .metro-promo-card, .footer-grid, .local-data-card');
+  const reveals = document.querySelectorAll('.section, .metro-promo-card, .footer-compact, .footer-grid, .local-data-card');
   if (reveals.length && 'IntersectionObserver' in window) {
     const obs = new IntersectionObserver((entries) => {
       entries.forEach(e => {

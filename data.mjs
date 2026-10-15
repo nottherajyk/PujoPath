@@ -23,7 +23,7 @@ export const ZONES = {
   north:   { label: 'North Kolkata',   title: 'North Heritage',   blurb: 'Heritage lanes, bonedi pujas and river ghats', hub: 'Shyambazar & Shobhabazar', lines: 'Blue Line' },
   south:   { label: 'South Kolkata',   title: 'South Theme Hubs', blurb: 'Theme powerhouses and late-night adda',       hub: 'Kalighat & Netaji Bhavan',  lines: 'Blue Line' },
   central: { label: 'Central Kolkata', title: 'Central Classics', blurb: 'Heritage squares around MG Road and Sealdah', hub: 'MG Road & Sealdah',         lines: 'Blue & Green Lines' },
-  east:    { label: 'East Kolkata',    title: 'Salt Lake & East', blurb: 'Salt Lake and the tech corridor',              hub: 'Phoolbagan & Salt Lake',    lines: 'Green Line' },
+  east:    { label: 'East Kolkata',    title: 'Salt Lake & East', blurb: 'Salt Lake, New Town and the eastern corridor',  hub: 'Salt Lake, New Town & Rajarhat', lines: 'Green & Yellow Lines' },
   bonedi:  { label: 'Bonedi Bari',     title: 'Bonedi Bari',      blurb: 'Aristocratic family pujas, centuries old',     hub: 'Sovabazar & Girish Park',   lines: 'Blue Line' },
 };
 
@@ -215,6 +215,16 @@ Phoolbagan Sarbojanin|Phoolbagan Crossing|east|Phoolbagan|w:3,t:Vibrant crossroa
 Kankurgachi Ramkrishna Samiti|Kankurgachi|east|Phoolbagan|w:6,t:Devotional classical pandal inspired by temple sanctums
 Duttabad Sarbojanin|Salt Lake Bypass, Near Stadium|east|Salt Lake Stadium|w:5,t:Energetic community celebration near the iconic Salt Lake Stadium
 Sukanta Nagar Sarbojanin|Chingrighata, EM Bypass|east|Beliaghata|w:8,t:Colourful artisan pandal near the eastern bypass corridor
+New Town Sarbojanin Durgotsav|City Square, Action Area 1, New Town|east|Salt Lake Sector V|m,w:12,t:Flagship smart-city celebration at City Square with monumental architectural installations, cultural carnival and dazzling illumination
+New Town CE Block Sarbojanin|CE Block, Action Area 1, New Town|east|Salt Lake Sector V|w:10,t:Artistic community puja renowned for innovative eco-friendly craftsmanship and vibrant block camaraderie
+Uniworld City Cultural Association|Action Area 3, New Town|east|Salt Lake Sector V|w:18,t:Grand residential mega-township celebration celebrated for majestic classical idols, musical nights and festive adda
+Balaka Abasan Durgotsab|Balaka Abasan, Action Area 1, New Town|east|Salt Lake Sector V|w:9,t:Pioneering New Town housing society puja celebrated for warmth, traditional rituals and lively community feast
+New Town CD Block Sarbojanin|CD Block, Action Area 1, New Town|east|Salt Lake Sector V|w:12,t:Expressive socio-cultural themes created with intricate handcrafted natural materials
+Chinar Park Sarbojanin Durgotsab|Chinar Park, Rajarhat Main Road|east|Jai Hind (Airport)|m,w:10,t:Major arterial crossroads powerhouse renowned for imposing temple facades and dazzling Chandannagar illumination
+Gopalpur Sarbojanin Durgotsab|Gopalpur, Rajarhat|east|Jai Hind (Airport)|w:14,t:Century-old traditional community puja blending deep heritage rituals with artistic mandap artistry
+Narayanpur Sabuj Sangha|Narayanpur, Rajarhat|east|Jai Hind (Airport)|w:15,t:Celebrated club puja drawing massive festive crowds for its imposing sculptures and cultural exhibits
+Bablatala Sarbojanin Durgotsav|Bablatala, Rajarhat Main Road|east|Jai Hind (Airport)|w:12,t:Vibrant neighbourhood celebration connecting Rajarhat and VIP corridor with spectacular festive lighting
+Rajarhat Kalipark Sarbojanin|Kalipark, Rajarhat Main Road|east|Jai Hind (Airport)|w:11,t:Popular community puja known for colorful artistic themes and enthusiastic neighbourhood participation
 `.trim().split('\n');
 
 export const slugify = (s) =>

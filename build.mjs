@@ -126,22 +126,24 @@ ${sprite}
 ${body}
 </main>
 <footer class="site-footer"><div class="wrap">
-  <div class="footer-grid">
-    <div class="footer-brand">
-      <div class="brand">${icon('lotus', 'lotus')}<span>Puja<b>Path</b></span></div>
-      <p>Kolkata's definitive Durga Puja guide, pandal directory and metro route planner.</p>
+  <div class="footer-compact">
+    <div class="footer-top">
+      <a class="brand" href="/" aria-label="${SITE.name} home">${icon('lotus', 'lotus')}<span>Puja<b>Path</b></span></a>
+      <p class="footer-tagline">Kolkata’s Durga Puja ${SITE.year} guide & metro route planner.</p>
     </div>
-    <div class="footer-links">
-      <b>Quick links</b>
-      <nav aria-label="Footer quick links"><a href="/pandals">All Pandals</a><a href="/hopping">Explore Zones</a><a href="/planner">Route Planner</a><a href="/metro">Metro Guide</a><a href="/map">Metro Map</a><a href="/support">Support</a><a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Service</a></nav>
+    <nav class="footer-nav" aria-label="Footer quick links">
+      <a href="/pandals">Pandals</a>
+      <a href="/hopping">Zones</a>
+      <a href="/planner">Planner</a>
+      <a href="/metro">Metro</a>
+      <a href="/map">Map</a>
+      <a href="/support">Support</a>
+      <a href="/privacy">Privacy</a>
+      <a href="/terms">Terms</a>
+    </nav>
+    <div class="footer-bottom">
+      <p>© ${SITE.year} ${SITE.name} · Local device storage, zero ad tracking.</p>
     </div>
-    <div class="footer-meta">
-      <b>Durga Puja ${SITE.year}</b>
-      <p>Pandal timings and metro schedules are community-sourced and subject to change. Confirm with local committees.</p>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <p>© ${SITE.year} ${SITE.name}. Built with devotion for Kolkata Durga Puja. Local device storage, zero advertising tracking.</p>
   </div>
 </div></footer>
 <nav class="bottom-nav" aria-label="Primary mobile">${NAV.map((n) => `<a href="${n.href}"${n.key === navKey ? ' aria-current="page"' : ''}>${icon(n.icon)}<span>${n.label}</span></a>`).join('')}</nav>
@@ -262,8 +264,7 @@ write('pandals/index.html', layout({
       <div class="field"><label for="f-walk">Distance</label><select class="select" id="f-walk"><option value="">Any distance</option><option value="10">Walk ≤ 10 min*</option><option value="20">Walk ≤ 20 min*</option></select></div>
     </div>
     <p class="count-note">*Walk times are listed only for pandals where a time is known.</p>
-  </div>
-  <div class="result-bar"><span data-count aria-live="polite"></span><button type="button" data-reset hidden>Clear filters</button></div>
+  <div class="result-bar" style="justify-content:flex-end"><button type="button" data-reset hidden>Clear filters</button></div>
   <div class="list" data-list>${PANDALS.slice(0, 10).map((p) => cardHTML(p, ctx)).join('')}</div>
   <div class="more-wrap"><button class="btn btn-ghost" type="button" data-more>View more pandals</button><span class="count-note" data-more-note></span></div>
 </div>`,
@@ -290,9 +291,9 @@ write('hopping/index.html', layout({
 }));
 
 // ================= PLANNER =================
-const stationOptions = LINES.flatMap((l) => l.stations.map((s) => [s, l]))
+const stationDatalist = LINES.flatMap((l) => l.stations.map((s) => [s, l]))
   .filter(([s], i, a) => a.findIndex(([x]) => x === s) === i)
-  .map(([s, l]) => `<option value="${esc(s)}">${esc(s)} (${l.name.replace(' Line', '')})</option>`).join('');
+  .map(([s, l]) => `<option value="${esc(s)}">${esc(s)} (${l.name.replace(' Line', '')} Line)</option>`).join('');
 write('planner/index.html', layout({
   title: `Durga Puja Route Planner Kolkata: Build a Pandal Hopping Itinerary | ${SITE.name}`,
   desc: 'Plan your Kolkata Durga Puja route. Choose a date, starting metro station and zone, and get an ordered pandal itinerary with estimated time and Google Maps directions.',
@@ -305,7 +306,17 @@ write('planner/index.html', layout({
     <div class="seg" role="group" aria-label="Build route by"><button type="button" aria-pressed="true" data-mode="zone">By zone</button><button type="button" aria-pressed="false" data-mode="line">By metro</button><button type="button" aria-pressed="false" data-mode="custom">Custom</button></div>
     <div class="two">
       <div class="field"><label for="p-date">Date</label><input class="input" id="p-date" type="date"></div>
-      <div class="field"><label for="p-start">Starting station</label><select class="select" id="p-start">${stationOptions}</select></div>
+      <div class="field station-search-field">
+        <label for="p-start">Starting station</label>
+        <div class="station-search-box">
+          <input class="input" id="p-start" type="search" placeholder="Type station name (e.g. Kalighat)" autocomplete="off" list="station-datalist" value="Shyambazar" enterkeyhint="done" style="padding-left:38px">
+          ${icon('search', 'icon icon-l')}
+          <datalist id="station-datalist">
+            ${stationDatalist}
+          </datalist>
+          <div class="station-suggestions" data-station-suggestions hidden></div>
+        </div>
+      </div>
     </div>
     <div class="field" data-opt="zone"><label for="p-zone">Zone</label><select class="select" id="p-zone">${['north', 'south', 'central', 'east', 'bonedi'].map((k) => `<option value="${k}">${ZONES[k].title}</option>`).join('')}</select></div>
     <div class="field" data-opt="line" hidden><label for="p-line">Metro line</label><select class="select" id="p-line">${LINES.map((l) => `<option value="${l.id}">${l.name} (${l.short})</option>`).join('')}</select></div>

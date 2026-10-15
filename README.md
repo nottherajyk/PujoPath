@@ -1,6 +1,6 @@
 # PujaPath (পূজাপথ) — Kolkata Durga Puja Guide & Metro Route Planner
 
-PujaPath is a fast, responsive, mobile-first web app and cultural guide for Kolkata Durga Puja. It features 185 pandals with nearest metro stations and walking directions, North/South/Central/East hopping circuits, an interactive multi-stop route planner, offline-first local device storage, and a complete Kolkata Metro guide.
+PujaPath is a fast, responsive, mobile-first web app and cultural guide for Kolkata Durga Puja. It features 195 pandals with nearest metro stations and walking directions, North/South/Central/East hopping circuits, an interactive multi-stop route planner, offline-first local device storage, and a complete Kolkata Metro guide.
 
 Built with pure vanilla HTML, modern CSS, and lightweight client-side JavaScript. Zero runtime dependencies, generated statically by Node.js.
 
@@ -8,8 +8,8 @@ Built with pure vanilla HTML, modern CSS, and lightweight client-side JavaScript
 
 ## ✨ Features
 
-- **Pandal Directory (185 Pandals):** Filter by Zone (North, South, Central, East), Metro Line (Blue, Green, Orange, Yellow, Purple), category (Must-Visit, Bonedi Bari, Themed), and walk distance.
-- **Zone Hopping Circuits:** Curated walking and metro itineraries across North Heritage, South Theme Hubs, Central Classics, Salt Lake & East, and Bonedi Bari.
+- **Pandal Directory (195 Pandals):** Filter by Zone (North, South, Central, East), Metro Line (Blue, Green, Orange, Yellow, Purple), category (Must-Visit, Bonedi Bari, Themed), and walk distance.
+- **Zone Hopping Circuits:** Curated walking and metro itineraries across North Heritage, South Theme Hubs, Central Classics, Salt Lake & East (including New Town & Rajarhat), and Bonedi Bari.
 - **Interactive Route Planner:** Plan single or multi-pandal hopping itineraries ordered by metro proximity and walking efficiency, with one-tap Google Maps directions.
 - **Local Device Storage:** Wishlists, custom route plans, filters, and hopping preferences persist locally in `localStorage` without tracking or logins.
 - **Kolkata Metro Guide:** All metro lines and stations with pandal interchange information.
@@ -34,10 +34,10 @@ pujapath/
 │   │   ├── app.js            # Client-side reactivity, storage, routing & filters
 │   │   └── shared.js         # Shared helpers, templates & SVG icon definitions
 │   └── assets/
-│       ├── pandals/          # Curated pandal & idol photographs (185 pandals)
+│       ├── pandals/          # Curated pandal & idol photographs (195 pandals)
 │       ├── hero-night.webp   # Hero background visual
 │       └── og-image.jpg      # Open Graph social preview card
-├── public/                   # Generated production distribution (194 URLs)
+├── public/                   # Generated production distribution (204 URLs)
 └── scripts/                  # Data & asset maintenance utilities
 ```
 
