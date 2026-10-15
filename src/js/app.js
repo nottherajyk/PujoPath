@@ -1667,9 +1667,10 @@ function initInstallBanner() {
 
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
-  // Polite delay of 2.5s so user interacts smoothly with page first
+  // Polite delay so user interacts smoothly with page first; wait for guide dismissal
   setTimeout(() => {
     if (localStorage.getItem('pujopath_install_prompt')) return;
+    if (!store.get('pp_guide_dismissed', false)) return;
 
     const banner = document.createElement('div');
     banner.className = 'install-prompt';
@@ -1746,7 +1747,131 @@ function initInstallBanner() {
         }
       }
     });
-  }, 2500);
+  }, 4000);
 }
 initInstallBanner();
+
+/* ---------- App Guide / Onboarding Tutorial (First-time visitors) ---------- */
+function initGuide() {
+  if (typeof window === 'undefined') return;
+  const modal = $('[data-guide-modal]');
+  if (!modal) return;
+
+  const slides = $$('[data-guide-slide]', modal);
+  const dots = $$('[data-guide-dot]', modal);
+  const stepText = $('[data-guide-step-text]', modal);
+  const btnPrev = $('[data-guide-prev]', modal);
+  const btnNext = $('[data-guide-next]', modal);
+  const openTriggers = $$('[data-open-guide]');
+  let currentStep = 0;
+
+  function showStep(idx) {
+    currentStep = Math.max(0, Math.min(idx, slides.length - 1));
+    slides.forEach((s, i) => {
+      s.classList.toggle('is-active', i === currentStep);
+      s.hidden = (i !== currentStep);
+    });
+    dots.forEach((d, i) => {
+      d.classList.toggle('is-active', i === currentStep);
+      d.setAttribute('aria-selected', i === currentStep ? 'true' : 'false');
+    });
+    if (stepText) {
+      stepText.textContent = `Quick Guide · ${currentStep + 1} of ${slides.length}`;
+    }
+    if (btnPrev) {
+      btnPrev.style.display = currentStep > 0 ? 'inline-flex' : 'none';
+    }
+    if (btnNext) {
+      if (currentStep === slides.length - 1) {
+        btnNext.textContent = 'Start Hopping 🎉';
+        btnNext.classList.add('guide-finish-btn');
+      } else {
+        btnNext.textContent = 'Next →';
+        btnNext.classList.remove('guide-finish-btn');
+      }
+    }
+  }
+
+  function openGuide() {
+    showStep(0);
+    modal.hidden = false;
+    document.body.classList.add('modal-open');
+    requestAnimationFrame(() => {
+      modal.classList.add('is-open');
+    });
+  }
+
+  function closeGuide(markDismissed = true) {
+    if (markDismissed) {
+      store.set('pp_guide_dismissed', true);
+    }
+    modal.classList.remove('is-open');
+    document.body.classList.remove('modal-open');
+    setTimeout(() => {
+      if (!modal.classList.contains('is-open')) {
+        modal.hidden = true;
+      }
+    }, 280);
+  }
+
+  // Dismiss listeners: "Skip Tutorial", close (x) button, and backdrop click
+  $$('[data-guide-dismiss]', modal).forEach((btn) => {
+    btn.addEventListener('click', () => closeGuide(true));
+  });
+
+  // Next / Finish button
+  btnNext?.addEventListener('click', () => {
+    if (currentStep < slides.length - 1) {
+      showStep(currentStep + 1);
+    } else {
+      closeGuide(true);
+    }
+  });
+
+  // Previous button
+  btnPrev?.addEventListener('click', () => {
+    if (currentStep > 0) {
+      showStep(currentStep - 1);
+    }
+  });
+
+  // Step indicator dots
+  dots.forEach((dot, i) => {
+    dot.addEventListener('click', () => showStep(i));
+  });
+
+  // Keyboard navigation: Escape to exit/skip, Left/Right arrows for steps
+  window.addEventListener('keydown', (e) => {
+    if (modal.hidden || !modal.classList.contains('is-open')) return;
+    if (e.key === 'Escape') {
+      closeGuide(true);
+    } else if (e.key === 'ArrowRight') {
+      if (currentStep < slides.length - 1) showStep(currentStep + 1);
+    } else if (e.key === 'ArrowLeft') {
+      if (currentStep > 0) showStep(currentStep - 1);
+    }
+  });
+
+  // Manual trigger buttons across the site (header, footer, home hero)
+  openTriggers.forEach((trigger) => {
+    trigger.addEventListener('click', (e) => {
+      e.preventDefault();
+      openGuide();
+    });
+  });
+
+  // Auto-launch for first-time visitors after smooth page load delay (600ms)
+  try {
+    const isDismissed = store.get('pp_guide_dismissed', false);
+    if (!isDismissed) {
+      setTimeout(() => {
+        if (!store.get('pp_guide_dismissed', false)) {
+          openGuide();
+        }
+      }, 600);
+    }
+  } catch (e) {}
+}
+initGuide();
+
 
