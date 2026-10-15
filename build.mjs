@@ -199,6 +199,8 @@ const guideModalHTML = `
   </div>
 </div>`;
 
+const BUILD_VER = Date.now().toString(36);
+
 function layout({ title, desc, pathname, navKey, subKey, body, jsonld = [], page, ogImage = '/og-image.jpg', noindex = false, keywords = KEYWORDS, bodyClass = '', ogType = 'website' }) {
   const url = SITE.url + pathname;
   const ld = jsonld.map((o) => `<script type="application/ld+json">${JSON.stringify(o)}</script>`).join('\n');
@@ -228,7 +230,7 @@ function layout({ title, desc, pathname, navKey, subKey, body, jsonld = [], page
 <meta name="apple-mobile-web-app-title" content="PujoPath">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600;1,700&family=Poppins:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/style.css?v=${BUILD_VER}">
 <script>
 (function(){
   try {
@@ -283,7 +285,7 @@ ${body}
 <nav class="bottom-nav" aria-label="Primary mobile">${NAV.map((n) => `<a href="${n.href}"${n.key === navKey ? ' aria-current="page"' : ''}>${icon(n.icon)}<span>${n.label}</span></a>`).join('')}</nav>
 <div class="toast" role="status" aria-live="polite" data-toast></div>
 ${guideModalHTML}
-<script type="module" src="/js/app.js"></script>
+<script type="module" src="/js/app.js?v=${BUILD_VER}"></script>
 </body>
 </html>`;
 }
