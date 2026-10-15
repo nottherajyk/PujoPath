@@ -891,6 +891,7 @@ body[data-page="home"] .site-header:not(.is-scrolled) .top-links a:hover {
   color: #FAF8F5;
   outline: none;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  text-overflow: ellipsis;
   transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
 }
 
@@ -911,8 +912,9 @@ body[data-page="home"] .site-header:not(.is-scrolled) .top-links a:hover {
   transform: translateY(-50%);
   width: 18px;
   height: 18px;
-  color: rgba(243, 238, 232, 0.7);
+  color: rgba(243, 238, 232, 0.75);
   pointer-events: none;
+  z-index: 2;
 }
 
 .hero-search-btn {
@@ -929,6 +931,7 @@ body[data-page="home"] .site-header:not(.is-scrolled) .top-links a:hover {
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
+  z-index: 2;
   transition: background-color 0.15s, color 0.15s;
 }
 
@@ -1005,13 +1008,7 @@ body[data-page="home"] .site-header:not(.is-scrolled) .top-links a:hover {
     gap: 0.12em 0.22em;
   }
   .hero-strip {
-    width: clamp(96px, 26vw, 130px);
-    height: 0.82em;
-    margin: 0 3px;
-    transform: translateY(0.03em);
-  }
-  .hero-strip img {
-    object-position: 72% center;
+    display: none !important;
   }
   .hero-statement {
     font-size: 14.5px;
@@ -1022,34 +1019,42 @@ body[data-page="home"] .site-header:not(.is-scrolled) .top-links a:hover {
   .hero-interaction-group {
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
+    gap: 12px;
   }
   .hero-prime-btn {
+    flex: none;
     width: 100%;
     height: 48px;
-    font-size: 14.5px;
+    font-size: 15px;
     padding: 0 20px;
   }
   .hero-search-bar {
+    flex: none;
     width: 100%;
     max-width: 100%;
     height: 48px;
   }
   .hero-search-bar input {
-    padding: 0 84px 0 42px;
-    font-size: 13.5px;
+    height: 100%;
+    padding: 0 88px 0 42px;
+    font-size: 16px;
+    box-sizing: border-box;
+    text-overflow: ellipsis;
   }
   .hero-search-ico {
     left: 14px;
-    width: 16px;
-    height: 16px;
+    width: 17px;
+    height: 17px;
+    z-index: 2;
   }
   .hero-search-btn {
-    right: 4px;
-    top: 4px;
-    bottom: 4px;
-    padding: 0 14px;
-    font-size: 12.5px;
+    right: 5px;
+    top: 5px;
+    bottom: 5px;
+    padding: 0 16px;
+    font-size: 13px;
+    font-weight: 600;
+    z-index: 2;
   }
   .hero-links-strip {
     display: flex;

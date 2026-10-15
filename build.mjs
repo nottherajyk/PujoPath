@@ -336,12 +336,8 @@ write('index.html', layout({
   </div>
   <div class="wrap hero-wrap">
     <div class="hero-body">
-      <!-- Sentence as Layout -->
       <h1 class="hero-headline">
         <span class="hero-line-start">Hop More.</span>
-        <span class="hero-strip" aria-hidden="true">
-          <img src="/assets/hero-night.webp" alt="Illuminated Durga Puja pandal and golden idol at night" width="600" height="130" fetchpriority="high">
-        </span>
         <span class="hero-line-end">Miss Less.</span>
       </h1>
       
