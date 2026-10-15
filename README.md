@@ -25,8 +25,7 @@ pujapath/
 ├── build.mjs                 # Static site generator (generates public/)
 ├── data.mjs                  # Pandal directory, zones, metro lines & site config
 ├── package.json              # NPM scripts
-├── vercel.json               # Vercel deployment configuration
-├── netlify.toml              # Netlify deployment configuration
+├── vercel.json               # Vercel deployment & security headers configuration
 ├── .github/workflows/        # Automated GitHub Pages CI/CD workflow
 ├── src/
 │   ├── css/style.css         # Design system, responsive layout & animations
@@ -67,17 +66,13 @@ pujapath/
 
 ## 🌐 Deployment Options
 
-### Vercel (Recommended)
+### Vercel (Deployment)
 1. Push to your GitHub repository.
 2. Import the repository in [Vercel](https://vercel.com).
 3. Vercel automatically detects [`vercel.json`](./vercel.json) and [`package.json`](./package.json):
    - **Build Command:** `node build.mjs`
    - **Output Directory:** `public`
 4. Click **Deploy**.
-
-### Netlify
-1. Import the repository into [Netlify](https://www.netlify.com).
-2. Netlify automatically reads [`netlify.toml`](./netlify.toml) with build command `node build.mjs` and publish directory `public`.
 
 ### GitHub Pages
 - PujaPath includes a GitHub Actions workflow in [`.github/workflows/deploy.yml`](./.github/workflows/deploy.yml).

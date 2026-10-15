@@ -195,7 +195,7 @@ const crumbs = (items) => ({ '@context': 'https://schema.org', '@type': 'Breadcr
 
 // ================= HOME =================
 write('index.html', layout({
-  title: `${SITE.name}: Less “Where Next?” More “WOW.” | Kolkata Durga Puja ${SITE.year} Route Planner`,
+  title: `${SITE.name}: Hop More. Miss Less. | Kolkata Durga Puja ${SITE.year} Route Planner`,
   desc: `Explore ${total}+ Kolkata Durga Puja ${SITE.year} pandals, find the nearest metro station, plan a pandal-hopping route by zone or metro line and save your favourites.`,
   pathname: '/', navKey: 'home', page: 'home', jsonld: [org],
   body: `
@@ -214,8 +214,8 @@ write('index.html', layout({
   <img class="hero-img" src="/assets/hero-night.webp" alt="Illuminated Durga Puja pandal at night with a golden idol and red banners, crowds filming" width="1672" height="941" fetchpriority="high">
   <div class="wrap">
     <div class="hero-content">
-      <h1>Less<br class="hide-desktop"> “Where Next?” <em>More “WOW.”</em></h1>
-      <p class="lead">Your next pandal, your smartest route, your best Pujo yet.</p>
+      <h1>Hop More. <em>Miss Less.</em></h1>
+      <p class="lead">Your pandal-hopping plan, sorted. Discover the must-sees, map your route, and fit more Pujo into every night.</p>
       <form class="search" action="/pandals" method="get" role="search">
         ${icon('search', 'icon icon-l')}
         <label class="sr-only" for="hq">Search pandals, areas or metro stations</label>
@@ -807,7 +807,18 @@ fs.writeFileSync(path.join(ROOT, 'vercel.json'), JSON.stringify({
   headers: [
     { source: '/assets/(.*)', headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }] },
     { source: '/(css|js)/(.*)', headers: [{ key: 'Cache-Control', value: 'public, max-age=3600, must-revalidate' }] },
+    {
+      source: '/(.*)',
+      headers: [
+        { key: 'X-Content-Type-Options', value: 'nosniff' },
+        { key: 'X-Frame-Options', value: 'DENY' },
+        { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+        { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains; preload' },
+        { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+        { key: 'Content-Security-Policy', value: "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; frame-ancestors 'none'; form-action 'self';" }
+      ]
+    }
   ],
-}, null, 2));
+}, null, 2) + '\n');
 
 console.log(`Built ${PANDALS.length} pandals → ${urls.length} URLs in public/`);
